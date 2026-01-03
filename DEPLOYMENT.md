@@ -92,7 +92,7 @@ git push -u origin main
 #### Variables Laravel essentielles
 
 ```env
-APP_NAME=Maraîcher MVP
+APP_NAME=Domaine des Papangues
 APP_ENV=production
 APP_DEBUG=false
 APP_TIMEZONE=Indian/Reunion

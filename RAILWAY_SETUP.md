@@ -43,7 +43,7 @@ Clique sur ton service Laravel (pas la base de données) > **Variables**
 **Copie-colle toutes ces variables :**
 
 ```env
-APP_NAME=Maraîcher MVP
+APP_NAME=Domaine des Papangues
 APP_ENV=production
 APP_DEBUG=false
 APP_TIMEZONE=Indian/Reunion
