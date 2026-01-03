@@ -21,6 +21,10 @@ LOG_CHANNEL=stack
 # === Clé d'application ===
 APP_KEY=base64:Q/eNwtn7up/NaKj8VtNmsNMjrS2FeWtpIPeJPEjnc98=
 
+# === URL de l'application (IMPORTANT pour HTTPS) ===
+# Remplace par ton URL Railway (avec HTTPS!)
+APP_URL=https://mairaicher-mvp-production.up.railway.app
+
 # === Base de données MySQL ===
 # IMPORTANT : Utilise la référence au service MySQL Railway
 DB_CONNECTION=mysql
