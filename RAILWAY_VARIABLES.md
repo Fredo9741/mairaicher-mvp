@@ -44,6 +44,7 @@ AWS_DEFAULT_REGION=auto
 AWS_BUCKET=maraicher-images
 AWS_ENDPOINT=https://898047b4c422ffe9966cc1cb7493ceed.r2.cloudflarestorage.com
 AWS_USE_PATH_STYLE_ENDPOINT=true
+R2_PUBLIC_URL=https://files-maraicher.fredlabs.org
 
 # === Mail (log en production pour l'instant) ===
 MAIL_MAILER=log
