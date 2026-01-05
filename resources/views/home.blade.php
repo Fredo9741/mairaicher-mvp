@@ -249,7 +249,7 @@
                 <div class="group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200 hover:-translate-y-1">
                     @if($product->image)
                     <div class="relative h-56 overflow-hidden bg-gray-50">
-                        <img src="{{ $product->image }}"
+                        <img src="https://files-maraicher.fredlabs.org/{{ $product->image }}"
                              alt="{{ $product->name }}"
                              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute top-3 right-3">
