@@ -5,6 +5,22 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 
+// Authentification - Redirection vers Filament
+Route::get('/login', function () {
+    return redirect('/admin/login');
+})->name('login');
+
+Route::get('/register', function () {
+    return redirect('/admin/register');
+})->name('register');
+
+Route::post('/logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+})->name('logout');
+
 // Page d'accueil
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
