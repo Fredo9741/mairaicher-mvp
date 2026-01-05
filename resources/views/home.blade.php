@@ -126,6 +126,26 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($bundles as $bundle)
             <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200 hover:-translate-y-1">
+                @if($bundle->image)
+                <!-- Image du panier -->
+                <div class="relative h-56 overflow-hidden bg-gray-50">
+                    <img src="https://files-maraicher.fredlabs.org/{{ $bundle->image }}"
+                         alt="{{ $bundle->name }}"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute top-3 left-3">
+                        <span class="inline-flex items-center gap-2 bg-white/95 backdrop-blur-sm text-emerald-700 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                            </svg>
+                            Panier
+                        </span>
+                    </div>
+                    <div class="absolute bottom-3 left-3">
+                        <h3 class="text-2xl font-bold text-white drop-shadow-lg">{{ $bundle->name }}</h3>
+                    </div>
+                </div>
+                @else
+                <!-- Version gradient si pas d'image -->
                 <div class="relative bg-gradient-to-br from-emerald-500 to-green-600 p-6 pb-8">
                     <div class="flex items-start justify-between mb-3">
                         <span class="inline-flex items-center gap-2 bg-white/90 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-bold shadow-sm">
@@ -144,6 +164,7 @@
                         </svg>
                     </div>
                 </div>
+                @endif
 
                 <div class="p-6 pt-2">
                     <p class="text-gray-600 mb-6 min-h-[3rem] leading-relaxed">{{ $bundle->description }}</p>
