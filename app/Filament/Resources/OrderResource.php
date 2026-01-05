@@ -241,16 +241,19 @@ class OrderResource extends Resource
                         Infolists\Components\RepeatableEntry::make('items')
                             ->label('')
                             ->schema([
-                                Infolists\Components\TextEntry::make('product.name')
-                                    ->label('Produit')
-                                    ->default(fn ($record) => $record->bundle?->name),
+                                Infolists\Components\TextEntry::make('item_name')
+                                    ->label('Produit'),
                                 Infolists\Components\TextEntry::make('quantity')
-                                    ->label('Quantité'),
-                                Infolists\Components\TextEntry::make('price_at_purchase')
+                                    ->label('Quantité')
+                                    ->suffix(fn ($record) => $record->item_type === 'product' && str_contains($record->item_name, 'kg') ? ' kg' : ' pc'),
+                                Infolists\Components\TextEntry::make('unit_price_cents')
                                     ->label('Prix unitaire')
                                     ->formatStateUsing(fn ($state) => number_format($state / 100, 2, ',', ' ') . ' €'),
+                                Infolists\Components\TextEntry::make('total_price_cents')
+                                    ->label('Total')
+                                    ->formatStateUsing(fn ($state) => number_format($state / 100, 2, ',', ' ') . ' €'),
                             ])
-                            ->columns(3),
+                            ->columns(4),
                     ]),
             ]);
     }
@@ -266,6 +269,7 @@ class OrderResource extends Resource
     {
         return [
             'index' => Pages\ListOrders::route('/'),
+            'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
