@@ -5,14 +5,14 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Hero Section - Design Moderne & Organique -->
-    <div class="relative bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 rounded-3xl shadow-2xl overflow-hidden mb-16">
-        <!-- Image de fond - Hauts de La Réunion -->
+    <div class="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl shadow-2xl overflow-hidden mb-16">
+        <!-- Image de fond - Tomates -->
         <div class="absolute inset-0">
             <img src="{{ asset('images/hero-reunion.jpg') }}"
-                 alt="Hauts de La Réunion"
+                 alt="Tomates fraîches"
                  class="w-full h-full object-cover">
-            <!-- Overlay gradient pour meilleure lisibilité -->
-            <div class="absolute inset-0 bg-gradient-to-br from-emerald-900/80 via-green-800/75 to-teal-900/80"></div>
+            <!-- Overlay léger pour meilleure lisibilité sans dénaturer les couleurs -->
+            <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/50"></div>
         </div>
 
         <div class="relative px-8 py-20 md:py-28">
@@ -26,8 +26,8 @@
                     Domaine des Papangues
                 </h1>
 
-                <p class="text-xl md:text-2xl text-emerald-50 mb-8 leading-relaxed max-w-3xl mx-auto font-light">
-                    Des légumes frais cultivés avec soin, une volaille fermière de qualité et des paniers de saison pour une alimentation saine au quotidien.
+                <p class="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed max-w-3xl mx-auto font-light">
+                    Domaine des Papangues : agriculture, élevage biologique et traditionnel
                 </p>
 
                 <div class="flex flex-wrap justify-center gap-4 mb-10">
