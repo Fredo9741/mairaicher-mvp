@@ -59,6 +59,17 @@ class Product extends Model
         return $this->is_active && $this->stock >= $quantity;
     }
 
+    public function getStockErrorMessage(): string
+    {
+        if ($this->unit === 'kg') {
+            $stockText = $this->stock == 1 ? '1 kilo' : $this->stock . ' kilos';
+            return "Il ne reste que {$stockText} en stock.";
+        } else {
+            $stockText = $this->stock == 1 ? '1 pièce' : $this->stock . ' pièces';
+            return "Il ne reste que {$stockText} en stock.";
+        }
+    }
+
     public function decrementStock(float $quantity): void
     {
         $this->decrement('stock', $quantity);

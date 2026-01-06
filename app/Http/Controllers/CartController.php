@@ -23,7 +23,7 @@ class CartController extends Controller
         $quantity = (float) $validated['quantity'];
 
         if (!$product->isAvailable($quantity)) {
-            return back()->with('error', 'Stock insuffisant pour ce produit.');
+            return back()->with('error', $product->getStockErrorMessage());
         }
 
         $cart = session()->get('cart', []);
