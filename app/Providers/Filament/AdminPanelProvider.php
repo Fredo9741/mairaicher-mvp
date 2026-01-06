@@ -27,8 +27,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandUrl('/')
             ->brandName('Domaine des Papangues')
+            ->homeUrl('/')
             ->colors([
                 'primary' => Color::Green,
             ])

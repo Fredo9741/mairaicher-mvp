@@ -21,17 +21,20 @@ class CartController extends Controller
         ]);
 
         $quantity = (float) $validated['quantity'];
+        $cart = session()->get('cart', []);
+        $itemKey = 'product_' . $product->id;
 
-        if (!$product->isAvailable($quantity)) {
+        // Calculer la quantité totale demandée (panier + nouvelle quantité)
+        $currentQuantity = isset($cart[$itemKey]) ? $cart[$itemKey]['quantity'] : 0;
+        $totalQuantity = $currentQuantity + $quantity;
+
+        // Vérifier le stock avec la quantité totale
+        if (!$product->isAvailable($totalQuantity)) {
             return back()->with('error', $product->getStockErrorMessage());
         }
 
-        $cart = session()->get('cart', []);
-
-        $itemKey = 'product_' . $product->id;
-
         if (isset($cart[$itemKey])) {
-            $cart[$itemKey]['quantity'] += $quantity;
+            $cart[$itemKey]['quantity'] = $totalQuantity;
         } else {
             $cart[$itemKey] = [
                 'type' => 'product',
@@ -93,7 +96,18 @@ class CartController extends Controller
             if ($validated['quantity'] == 0) {
                 unset($cart[$itemKey]);
             } else {
-                $cart[$itemKey]['quantity'] = (float) $validated['quantity'];
+                $newQuantity = (float) $validated['quantity'];
+
+                // Vérifier le stock uniquement pour les produits (pas les bundles)
+                if ($cart[$itemKey]['type'] === 'product') {
+                    $product = Product::find($cart[$itemKey]['id']);
+
+                    if ($product && !$product->isAvailable($newQuantity)) {
+                        return back()->with('error', $product->getStockErrorMessage());
+                    }
+                }
+
+                $cart[$itemKey]['quantity'] = $newQuantity;
             }
 
             session()->put('cart', $cart);
