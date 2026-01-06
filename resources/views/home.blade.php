@@ -5,12 +5,13 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Hero Section - Design Moderne & Organique -->
-    <div class="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl shadow-2xl overflow-hidden mb-16">
+    <div class="relative bg-red-600 rounded-3xl shadow-2xl overflow-hidden mb-16">
         <!-- Image de fond - Tomates -->
         <div class="absolute inset-0">
             <img src="{{ asset('images/hero-reunion.jpg') }}"
                  alt="Tomates fraîches"
-                 class="w-full h-full object-cover">
+                 class="w-full h-full object-cover"
+                 loading="eager">
             <!-- Overlay léger pour meilleure lisibilité sans dénaturer les couleurs -->
             <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/50"></div>
         </div>

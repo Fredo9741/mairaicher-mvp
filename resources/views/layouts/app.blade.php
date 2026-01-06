@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Domaine des Papangues')</title>
+    <!-- Préchargement de l'image hero -->
+    <link rel="preload" href="{{ asset('images/hero-reunion.jpg') }}" as="image">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50">
