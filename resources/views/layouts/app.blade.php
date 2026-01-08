@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Domaine des Papangues')</title>
     <!-- Préchargement de l'image hero -->
     <link rel="preload" href="{{ asset('images/hero-reunion.jpg') }}" as="image">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="{{ asset('js/cart.js') }}" defer></script>
 </head>
 <body class="bg-gray-50">
     <!-- Navigation -->
@@ -38,9 +40,7 @@
                             $cart = session()->get('cart', []);
                             $itemCount = count($cart);
                         @endphp
-                        @if($itemCount > 0)
-                            <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-emerald-600 rounded-full">{{ $itemCount }}</span>
-                        @endif
+                        <span data-cart-count class="absolute -top-1 -right-1 inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-emerald-600 rounded-full {{ $itemCount > 0 ? '' : 'hidden' }}">{{ $itemCount > 0 ? $itemCount : '' }}</span>
                     </a>
 
                     @auth
@@ -91,9 +91,7 @@
                             $cart = session()->get('cart', []);
                             $itemCount = count($cart);
                         @endphp
-                        @if($itemCount > 0)
-                            <span class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-emerald-600 rounded-full">{{ $itemCount }}</span>
-                        @endif
+                        <span data-cart-count class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-emerald-600 rounded-full {{ $itemCount > 0 ? '' : 'hidden' }}">{{ $itemCount > 0 ? $itemCount : '' }}</span>
                     </a>
                     <button @click="open = !open" class="text-gray-700 p-2">
                         <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -186,7 +186,7 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('cart.add.bundle', $bundle) }}" method="POST" class="space-y-4">
+                    <form action="{{ route('cart.add.bundle', $bundle) }}" method="POST" class="space-y-4" data-cart-form>
                         @csrf
                         <div class="flex items-center gap-3 bg-gray-50 rounded-xl p-4">
                             <label class="text-sm font-semibold text-gray-700 flex-shrink-0">Quantité</label>
@@ -323,7 +323,7 @@
                             </div>
                         </div>
 
-                        <form action="{{ route('cart.add.product', $product) }}" method="POST" class="space-y-3">
+                        <form action="{{ route('cart.add.product', $product) }}" method="POST" class="space-y-3" data-cart-form>
                             @csrf
                             <div class="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
                                 <label class="text-xs font-semibold text-gray-600 flex-shrink-0">Qté</label>

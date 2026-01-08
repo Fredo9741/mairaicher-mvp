@@ -30,6 +30,12 @@ class CartController extends Controller
 
         // Vérifier le stock avec la quantité totale
         if (!$product->isAvailable($totalQuantity)) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $product->getStockErrorMessage()
+                ], 400);
+            }
             return back()->with('error', $product->getStockErrorMessage());
         }
 
@@ -48,6 +54,16 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
+        // Réponse JSON pour AJAX
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Produit ajouté au panier !',
+                'cartCount' => count($cart),
+                'product' => $product->name
+            ]);
+        }
+
         return back()->with('success', 'Produit ajouté au panier !');
     }
 
@@ -60,6 +76,12 @@ class CartController extends Controller
         $quantity = (int) $validated['quantity'];
 
         if (!$bundle->isAvailable()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ce panier n\'est plus disponible.'
+                ], 400);
+            }
             return back()->with('error', 'Ce panier n\'est plus disponible.');
         }
 
@@ -80,6 +102,16 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
+
+        // Réponse JSON pour AJAX
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Panier ajouté !',
+                'cartCount' => count($cart),
+                'product' => $bundle->name
+            ]);
+        }
 
         return back()->with('success', 'Panier ajouté au panier !');
     }
