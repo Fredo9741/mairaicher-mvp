@@ -62,10 +62,20 @@ function updateCartCount(count) {
     const cartBadges = document.querySelectorAll('[data-cart-count]');
     cartBadges.forEach(badge => {
         if (count > 0) {
+            // Mise à jour du contenu
             badge.textContent = count;
+
+            // Retirer hidden et forcer les styles
             badge.classList.remove('hidden');
+
+            // Forcer les styles inline pour contourner tout problème CSS
+            badge.style.backgroundColor = 'rgb(5, 150, 105)'; // emerald-600
+            badge.style.color = 'rgb(255, 255, 255)'; // white
+            badge.style.display = 'inline-flex';
         } else {
+            badge.textContent = '';
             badge.classList.add('hidden');
+            badge.style.display = 'none';
         }
     });
 }
@@ -78,9 +88,15 @@ function showNotification(message, type = 'success') {
 
     // Créer la notification
     const notification = document.createElement('div');
-    notification.className = `toast-notification fixed top-20 right-4 z-50 max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 transform transition-all duration-300 ease-in-out ${
+    notification.className = `toast-notification bg-white rounded-lg shadow-lg border-l-4 transform transition-all duration-300 ease-in-out ${
         type === 'success' ? 'border-emerald-500' : 'border-red-500'
     }`;
+    notification.style.position = 'fixed';
+    notification.style.top = '80px';
+    notification.style.right = '16px';
+    notification.style.maxWidth = '24rem';
+    notification.style.width = '100%';
+    notification.style.zIndex = '9999';
 
     notification.innerHTML = `
         <div class="p-4 flex items-center">
@@ -105,6 +121,9 @@ function showNotification(message, type = 'success') {
             </button>
         </div>
     `;
+
+    // Position initiale hors écran à droite
+    notification.style.transform = 'translateX(400px)';
 
     document.body.appendChild(notification);
 
