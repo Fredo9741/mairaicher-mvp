@@ -29,3 +29,8 @@ yarn-error.log
 
 # Logs
 storage/logs/*.log
+
+# Documentation with secrets
+RAILWAY_*.md
+*_VARIABLES.md
+*_SETUP.md
