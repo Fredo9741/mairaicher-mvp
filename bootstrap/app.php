@@ -12,7 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
-        $middleware->append(\App\Http\Middleware\CompressResponse::class);
+        // Temporairement désactivé - causait des problèmes d'affichage avec Filament
+        // $middleware->append(\App\Http\Middleware\CompressResponse::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
