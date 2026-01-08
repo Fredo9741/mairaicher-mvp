@@ -12,16 +12,16 @@ echo "🔑 Ensuring admin user exists with correct credentials..."
 php artisan db:seed --force --class=AdminUserSeeder
 echo "✅ Admin user seeder completed"
 
-# Check if database is empty (no users exist)
-USER_COUNT=$(php artisan tinker --execute="echo App\Models\User::count();")
+# Check if database needs seeding (check for products, not users)
+PRODUCT_COUNT=$(php artisan tinker --execute="echo App\Models\Product::count();")
 
-if [ "$USER_COUNT" -eq "1" ]; then
-    echo "🌱 Database has only admin, running full seeders..."
+if [ "$PRODUCT_COUNT" -eq "0" ]; then
+    echo "🌱 Database is empty, running all seeders..."
     php artisan db:seed --force
-    echo "✅ Full seeders completed successfully"
+    echo "✅ All seeders completed successfully"
 else
     echo "⏭️  Database already contains data, skipping additional seeders"
-    echo "   Found $USER_COUNT users in database"
+    echo "   Found $PRODUCT_COUNT products in database"
 fi
 
 echo "✨ Deployment initialization completed!"
