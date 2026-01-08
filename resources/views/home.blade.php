@@ -328,7 +328,7 @@
                             <div class="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
                                 <label class="text-xs font-semibold text-gray-600 flex-shrink-0">Qté</label>
                                 <input type="number" name="quantity" value="1" min="{{ $product->unit === 'kg' ? '0.1' : '1' }}"
-                                    step="{{ $product->unit === 'kg' ? '0.1' : '1' }}" max="{{ $product->stock }}"
+                                    step="{{ $product->unit === 'kg' ? '0.1' : '1' }}"
                                     class="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-sm transition-all">
                             </div>
                             <button type="submit"
