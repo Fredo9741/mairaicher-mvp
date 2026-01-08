@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('hero_sections', function (Blueprint $table) {
             $table->id();
             $table->string('title')->default('Domaine des Papangues');
-            $table->string('subtitle')->default('Domaine des Papangues : agriculture, élevage biologique et traditionnel');
+            $table->string('subtitle')->default('Agriculture, élevage biologique et traditionnel');
             $table->string('badge_text')->default('Production locale & Agriculture durable');
             $table->string('image')->nullable(); // URL R2 de l'image
             $table->boolean('is_active')->default(true);
