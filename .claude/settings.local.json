@@ -4,7 +4,8 @@
       "Bash(composer require:*)",
       "Bash(php artisan:*)",
       "Bash(npm install:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(composer show:*)"
     ]
   }
 }

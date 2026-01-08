@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\BundleResource\Pages;
+namespace App\Filament\Resources\HeroSectionResource\Pages;
 
-use App\Filament\Resources\BundleResource;
+use App\Filament\Resources\HeroSectionResource;
 use App\Services\ImageOptimizer;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateBundle extends CreateRecord
+class CreateHeroSection extends CreateRecord
 {
-    protected static string $resource = BundleResource::class;
+    protected static string $resource = HeroSectionResource::class;
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
@@ -23,7 +23,7 @@ class CreateBundle extends CreateRecord
                     $optimizedPath = $optimizer->optimize(
                         $file,
                         disk: 'r2',
-                        directory: 'bundles',
+                        directory: 'hero',
                         maxWidth: 1920,
                         quality: 80
                     );
@@ -31,7 +31,7 @@ class CreateBundle extends CreateRecord
                     $data['image'] = $optimizedPath;
                 }
             } catch (\Exception $e) {
-                \Log::error('Bundle image optimization failed: ' . $e->getMessage());
+                \Log::error('Hero image optimization failed: ' . $e->getMessage());
             }
         }
 

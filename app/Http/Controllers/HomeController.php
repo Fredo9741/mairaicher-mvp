@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Bundle;
+use App\Models\HeroSection;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
+        $hero = HeroSection::getActive();
+
         $products = Product::where('is_active', true)
             ->where('stock', '>', 0)
             ->orderBy('category')
@@ -23,7 +26,7 @@ class HomeController extends Controller
                 return $bundle->isAvailable();
             });
 
-        return view('home', compact('products', 'bundles'));
+        return view('home', compact('hero', 'products', 'bundles'));
     }
 
     public function showProduct(Product $product)

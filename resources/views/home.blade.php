@@ -6,12 +6,19 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Hero Section - Design Moderne & Organique -->
     <div class="relative bg-red-600 rounded-3xl shadow-2xl overflow-hidden mb-16">
-        <!-- Image de fond - Tomates -->
+        <!-- Image de fond -->
         <div class="absolute inset-0">
-            <img src="{{ asset('images/hero-reunion.jpg') }}"
-                 alt="Tomates fraîches"
-                 class="w-full h-full object-cover"
-                 loading="eager">
+            @if($hero && $hero->image)
+                <img src="{{ Storage::disk('r2')->url($hero->image) }}"
+                     alt="{{ $hero->title }}"
+                     class="w-full h-full object-cover"
+                     loading="eager">
+            @else
+                <img src="{{ asset('images/hero-reunion.jpg') }}"
+                     alt="Tomates fraîches"
+                     class="w-full h-full object-cover"
+                     loading="eager">
+            @endif
             <!-- Overlay léger pour meilleure lisibilité sans dénaturer les couleurs -->
             <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/50"></div>
         </div>
@@ -20,15 +27,15 @@
             <div class="max-w-4xl mx-auto text-center">
                 <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-5 py-2 rounded-full mb-6 border border-white/30">
                     <span class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></span>
-                    <span class="text-white text-sm font-medium">Production locale & Agriculture durable</span>
+                    <span class="text-white text-sm font-medium">{{ $hero->badge_text ?? 'Production locale & Agriculture durable' }}</span>
                 </div>
 
                 <h1 class="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight tracking-tight">
-                    Domaine des Papangues
+                    {{ $hero->title ?? 'Domaine des Papangues' }}
                 </h1>
 
                 <p class="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed max-w-3xl mx-auto font-light">
-                    Domaine des Papangues : agriculture, élevage biologique et traditionnel
+                    {{ $hero->subtitle ?? 'Domaine des Papangues : agriculture, élevage biologique et traditionnel' }}
                 </p>
 
                 <div class="flex flex-wrap justify-center gap-4 mb-10">
