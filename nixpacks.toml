@@ -4,15 +4,14 @@ nixPkgs = ["php83", "php83Extensions.pdo", "php83Extensions.pdo_mysql", "php83Ex
 [phases.install]
 cmds = [
   "composer install --no-dev --optimize-autoloader",
-  "npm ci"
+  "npm ci",
+  "npm run build"
 ]
 
 [phases.build]
 cmds = [
-  "npm run build",
-  "php artisan filament:upgrade",
   "php artisan filament:assets"
 ]
 
 [start]
-cmd = "bash railway/init-app.sh && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=$PORT"
+cmd = "bash railway/init-app.sh && php artisan serve --host=0.0.0.0 --port=$PORT"
