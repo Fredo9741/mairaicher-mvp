@@ -11,11 +11,8 @@ cmds = [
 cmds = [
   "npm run build",
   "php artisan filament:upgrade",
-  "php artisan filament:assets",
-  "php artisan config:cache",
-  "php artisan route:cache",
-  "php artisan view:cache"
+  "php artisan filament:assets"
 ]
 
 [start]
-cmd = "bash railway/init-app.sh && php artisan serve --host=0.0.0.0 --port=$PORT"
+cmd = "bash railway/init-app.sh && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=$PORT"
