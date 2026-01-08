@@ -47,7 +47,22 @@ class HeroSectionResource extends Resource
                                 '16:9',
                                 '21:9',
                             ])
-                            ->helperText('L\'image sera automatiquement optimisée et convertie en WebP par Cloudflare R2')
+                            ->saveUploadedFileUsing(function ($file) {
+                                $optimizer = app(\App\Services\ImageOptimizer::class);
+                                try {
+                                    return $optimizer->optimize(
+                                        $file,
+                                        disk: 'r2',
+                                        directory: 'hero',
+                                        maxWidth: 2560,
+                                        quality: 85
+                                    );
+                                } catch (\Exception $e) {
+                                    \Log::error('Hero image optimization failed: ' . $e->getMessage());
+                                    return $file->store('hero', 'r2');
+                                }
+                            })
+                            ->helperText('L\'image sera automatiquement optimisée et convertie en WebP')
                             ->columnSpanFull(),
                     ]),
 

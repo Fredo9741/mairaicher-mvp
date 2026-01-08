@@ -97,6 +97,21 @@ class BundleResource extends Resource
                             ->directory('bundles')
                             ->visibility('public')
                             ->imageEditor()
+                            ->saveUploadedFileUsing(function ($file) {
+                                $optimizer = app(\App\Services\ImageOptimizer::class);
+                                try {
+                                    return $optimizer->optimize(
+                                        $file,
+                                        disk: 'r2',
+                                        directory: 'bundles',
+                                        maxWidth: 1920,
+                                        quality: 80
+                                    );
+                                } catch (\Exception $e) {
+                                    \Log::error('Bundle image optimization failed: ' . $e->getMessage());
+                                    return $file->store('bundles', 'r2');
+                                }
+                            })
                             ->columnSpanFull(),
                     ]),
             ]);
