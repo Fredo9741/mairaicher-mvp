@@ -14,14 +14,16 @@ class BundleSeeder extends Seeder
     public function run(): void
     {
         // Panier du Marché
-        $panierMarche = Bundle::create([
-            'name' => 'Panier du Marché',
-            'description' => 'Un assortiment de légumes frais pour toute la semaine',
-            'price_cents' => 1200,
-            'is_active' => true,
-        ]);
+        $panierMarche = Bundle::updateOrCreate(
+            ['name' => 'Panier du Marché'],
+            [
+                'description' => 'Un assortiment de légumes frais pour toute la semaine',
+                'price_cents' => 1200,
+                'is_active' => true,
+            ]
+        );
 
-        $panierMarche->products()->attach([
+        $panierMarche->products()->sync([
             Product::where('name', 'Tomates')->first()->id => ['quantity_included' => 1.0],
             Product::where('name', 'Carottes')->first()->id => ['quantity_included' => 1.0],
             Product::where('name', 'Salades')->first()->id => ['quantity_included' => 2.0],
@@ -29,14 +31,16 @@ class BundleSeeder extends Seeder
         ]);
 
         // Panier Famille
-        $panierFamille = Bundle::create([
-            'name' => 'Panier Famille',
-            'description' => 'Un panier généreux pour toute la famille avec légumes variés',
-            'price_cents' => 2500,
-            'is_active' => true,
-        ]);
+        $panierFamille = Bundle::updateOrCreate(
+            ['name' => 'Panier Famille'],
+            [
+                'description' => 'Un panier généreux pour toute la famille avec légumes variés',
+                'price_cents' => 2500,
+                'is_active' => true,
+            ]
+        );
 
-        $panierFamille->products()->attach([
+        $panierFamille->products()->sync([
             Product::where('name', 'Tomates')->first()->id => ['quantity_included' => 2.0],
             Product::where('name', 'Carottes')->first()->id => ['quantity_included' => 2.0],
             Product::where('name', 'Pommes de terre')->first()->id => ['quantity_included' => 3.0],
@@ -46,14 +50,16 @@ class BundleSeeder extends Seeder
         ]);
 
         // Panier Volaille Complète
-        $panierVolaille = Bundle::create([
-            'name' => 'Panier Volaille Complète',
-            'description' => 'Poulet fermier avec des légumes frais pour un repas complet',
-            'price_cents' => 2800,
-            'is_active' => true,
-        ]);
+        $panierVolaille = Bundle::updateOrCreate(
+            ['name' => 'Panier Volaille Complète'],
+            [
+                'description' => 'Poulet fermier avec des légumes frais pour un repas complet',
+                'price_cents' => 2800,
+                'is_active' => true,
+            ]
+        );
 
-        $panierVolaille->products()->attach([
+        $panierVolaille->products()->sync([
             Product::where('name', 'Poulet fermier')->first()->id => ['quantity_included' => 1.0],
             Product::where('name', 'Pommes de terre')->first()->id => ['quantity_included' => 2.0],
             Product::where('name', 'Carottes')->first()->id => ['quantity_included' => 1.0],
@@ -61,14 +67,16 @@ class BundleSeeder extends Seeder
         ]);
 
         // Panier Découverte
-        $panierDecouverte = Bundle::create([
-            'name' => 'Panier Découverte',
-            'description' => 'Découvrez nos meilleurs produits à petit prix',
-            'price_cents' => 1500,
-            'is_active' => true,
-        ]);
+        $panierDecouverte = Bundle::updateOrCreate(
+            ['name' => 'Panier Découverte'],
+            [
+                'description' => 'Découvrez nos meilleurs produits à petit prix',
+                'price_cents' => 1500,
+                'is_active' => true,
+            ]
+        );
 
-        $panierDecouverte->products()->attach([
+        $panierDecouverte->products()->sync([
             Product::where('name', 'Tomates')->first()->id => ['quantity_included' => 1.0],
             Product::where('name', 'Concombres')->first()->id => ['quantity_included' => 2.0],
             Product::where('name', 'Poivrons')->first()->id => ['quantity_included' => 0.5],

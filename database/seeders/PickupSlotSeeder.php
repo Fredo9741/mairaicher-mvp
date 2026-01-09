@@ -34,7 +34,10 @@ class PickupSlotSeeder extends Seeder
         ];
 
         foreach ($slots as $slot) {
-            PickupSlot::create($slot);
+            PickupSlot::updateOrCreate(
+                ['name' => $slot['name']],
+                $slot
+            );
         }
     }
 }
