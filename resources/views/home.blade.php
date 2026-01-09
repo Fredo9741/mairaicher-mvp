@@ -11,7 +11,7 @@
             <img src="{{ ($hero && $hero->image) ? Storage::disk('r2')->url($hero->image) : asset('images/hero-reunion.jpg') }}"
                  alt="{{ $hero->title ?? 'Tomates fraîches' }}"
                  class="w-full h-full object-cover"
-                 loading="eager">
+                 fetchpriority="high">
             <!-- Overlay léger pour meilleure lisibilité sans dénaturer les couleurs -->
             <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/50"></div>
         </div>
