@@ -142,6 +142,49 @@
                             Panier
                         </span>
                     </div>
+
+                    <!-- Badge de stock -->
+                    @php
+                        $minAvailable = PHP_INT_MAX;
+                        foreach($bundle->products as $product) {
+                            $maxBundles = floor($product->stock / $product->pivot->quantity_included);
+                            if ($maxBundles < $minAvailable) {
+                                $minAvailable = $maxBundles;
+                            }
+                        }
+                    @endphp
+                    <div class="absolute top-3 right-3">
+                        @if($minAvailable > 10)
+                            <span class="inline-flex items-center gap-1.5 bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                                </svg>
+                                En stock
+                            </span>
+                        @elseif($minAvailable > 5)
+                            <span class="inline-flex items-center gap-1.5 bg-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                                </svg>
+                                {{ $minAvailable }} restants
+                            </span>
+                        @elseif($minAvailable > 0)
+                            <span class="inline-flex items-center gap-1.5 bg-red-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg animate-pulse">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                                </svg>
+                                {{ $minAvailable }} restants !
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 bg-gray-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                                </svg>
+                                Épuisé
+                            </span>
+                        @endif
+                    </div>
+
                     <div class="absolute bottom-3 left-3">
                         <h3 class="text-2xl font-bold text-white drop-shadow-lg">{{ $bundle->name }}</h3>
                     </div>
@@ -391,14 +434,43 @@
                              alt="{{ $product->name }}"
                              loading="lazy"
                              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+
+                        <!-- Badge stock (en haut à droite) -->
                         <div class="absolute top-3 right-3">
-                            <span class="bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-2 rounded-full text-xs font-bold shadow-lg border border-gray-200">
-                                {{ $product->unit === 'kg' ? 'Au kilo' : 'À la pièce' }}
-                            </span>
+                            @if($product->stock > 20)
+                                <span class="inline-flex items-center gap-1.5 bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                                    </svg>
+                                    En stock
+                                </span>
+                            @elseif($product->stock > 10)
+                                <span class="inline-flex items-center gap-1.5 bg-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                                    </svg>
+                                    Stock limité
+                                </span>
+                            @elseif($product->stock > 0)
+                                <span class="inline-flex items-center gap-1.5 bg-red-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg animate-pulse">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                                    </svg>
+                                    Plus que {{ number_format($product->stock, ($product->unit === 'kg' ? 1 : 0), ',', ' ') }}
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 bg-gray-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                                    </svg>
+                                    Épuisé
+                                </span>
+                            @endif
                         </div>
-                        <!-- Badge qualité -->
-                        <div class="absolute top-3 left-3">
-                            <span class="bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+
+                        <!-- Badge qualité (en bas à gauche) -->
+                        <div class="absolute bottom-3 left-3">
+                            <span class="bg-emerald-500/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
                                 </svg>
@@ -411,8 +483,42 @@
                         <span class="text-7xl filter drop-shadow-lg">
                             {{ $product->category === 'legume' ? '🥬' : ($product->category === 'volaille' ? '🐓' : '🌾') }}
                         </span>
-                        <!-- Badge qualité -->
-                        <div class="absolute top-3 left-3">
+
+                        <!-- Badge stock (en haut à droite) -->
+                        <div class="absolute top-3 right-3">
+                            @if($product->stock > 20)
+                                <span class="inline-flex items-center gap-1.5 bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                                    </svg>
+                                    En stock
+                                </span>
+                            @elseif($product->stock > 10)
+                                <span class="inline-flex items-center gap-1.5 bg-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                                    </svg>
+                                    Stock limité
+                                </span>
+                            @elseif($product->stock > 0)
+                                <span class="inline-flex items-center gap-1.5 bg-red-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg animate-pulse">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                                    </svg>
+                                    Plus que {{ number_format($product->stock, ($product->unit === 'kg' ? 1 : 0), ',', ' ') }}
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 bg-gray-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                                    </svg>
+                                    Épuisé
+                                </span>
+                            @endif
+                        </div>
+
+                        <!-- Badge qualité (en bas à gauche) -->
+                        <div class="absolute bottom-3 left-3">
                             <span class="bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
