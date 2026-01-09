@@ -15,6 +15,11 @@ Route::get('/login', function () {
 Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('socialite.redirect');
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->name('socialite.callback');
 
+// Test page for social login
+Route::get('/test-login', function () {
+    return view('auth.test-login');
+})->name('test.login');
+
 Route::get('/register', function () {
     return redirect('/admin/register');
 })->name('register');
