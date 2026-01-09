@@ -23,6 +23,9 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'role',
+        'provider',
+        'provider_id',
     ];
 
     /**
@@ -53,6 +56,30 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true; // Permet à tous les utilisateurs d'accéder au panel
+        return in_array($this->role, ['developer', 'maraicher']);
+    }
+
+    /**
+     * Check if user is a developer (super admin)
+     */
+    public function isDeveloper(): bool
+    {
+        return $this->role === 'developer';
+    }
+
+    /**
+     * Check if user is a maraicher (admin/manager)
+     */
+    public function isMaraicher(): bool
+    {
+        return $this->role === 'maraicher';
+    }
+
+    /**
+     * Check if user is a customer
+     */
+    public function isCustomer(): bool
+    {
+        return $this->role === 'customer';
     }
 }
