@@ -88,7 +88,7 @@ function showNotification(message, type = 'success') {
 
     // Créer la notification
     const notification = document.createElement('div');
-    notification.className = `toast-notification bg-white rounded-lg shadow-lg border-l-4 transform transition-all duration-300 ease-in-out ${
+    notification.className = `toast-notification rounded-lg shadow-lg border-l-4 transform transition-all duration-300 ease-in-out ${
         type === 'success' ? 'border-emerald-500' : 'border-red-500'
     }`;
     notification.style.position = 'fixed';
@@ -97,6 +97,13 @@ function showNotification(message, type = 'success') {
     notification.style.maxWidth = '24rem';
     notification.style.width = '100%';
     notification.style.zIndex = '9999';
+
+    // Background avec dégradé jaune léger pour succès
+    if (type === 'success') {
+        notification.style.background = 'linear-gradient(to left, rgba(238, 245, 39, 1), rgba(238, 245, 39, 0.7))';
+    } else {
+        notification.style.background = 'white';
+    }
 
     notification.innerHTML = `
         <div class="p-4 flex items-center">

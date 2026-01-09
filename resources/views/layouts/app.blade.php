@@ -10,7 +10,7 @@
 </head>
 <body class="bg-gray-50">
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg" x-data="{ open: false }">
+    <nav class="bg-white shadow-lg sticky top-0 z-50" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <!-- Logo -->
@@ -136,29 +136,47 @@
 
     <!-- Messages flash -->
     @if(session('success'))
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-4">
+            <div class="bg-gradient-to-r from-yellow-400 via-yellow-300 to-amber-400 border-2 border-yellow-500 text-gray-900 px-6 py-4 rounded-2xl shadow-2xl relative overflow-hidden" role="alert">
+                <div class="absolute inset-0 bg-yellow-400/20 animate-pulse"></div>
+                <div class="relative flex items-center gap-3">
+                    <svg class="w-6 h-6 text-yellow-800 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                    </svg>
+                    <span class="block font-bold text-lg">{{ session('success') }}</span>
+                </div>
             </div>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-4">
+            <div class="bg-gradient-to-r from-orange-500 via-orange-400 to-red-500 border-2 border-red-600 text-white px-6 py-4 rounded-2xl shadow-2xl relative overflow-hidden" role="alert">
+                <div class="absolute inset-0 bg-red-500/20 animate-pulse"></div>
+                <div class="relative flex items-center gap-3">
+                    <svg class="w-6 h-6 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                    </svg>
+                    <span class="block font-bold text-lg">{{ session('error') }}</span>
+                </div>
             </div>
         </div>
     @endif
 
     @if($errors->any())
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-4">
+            <div class="bg-gradient-to-r from-orange-500 via-orange-400 to-red-500 border-2 border-red-600 text-white px-6 py-4 rounded-2xl shadow-2xl relative overflow-hidden" role="alert">
+                <div class="absolute inset-0 bg-red-500/20 animate-pulse"></div>
+                <div class="relative flex items-start gap-3">
+                    <svg class="w-6 h-6 text-white flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                    </svg>
+                    <ul class="space-y-1 font-bold text-lg">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
         </div>
     @endif
