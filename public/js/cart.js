@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.reset();
                     const quantityInput = this.querySelector('input[name="quantity"]');
                     if (quantityInput) {
-                        quantityInput.value = quantityInput.step && quantityInput.step === '0.1' ? '0.1' : '1';
+                        // Toujours réinitialiser à 1, que ce soit kg ou pièce
+                        quantityInput.value = '1';
                     }
                 } else {
                     showNotification(data.message, 'error');
