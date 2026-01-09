@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Product extends Model
@@ -33,6 +34,20 @@ class Product extends Model
         static::creating(function ($product) {
             if (empty($product->slug)) {
                 $product->slug = Str::slug($product->name);
+            }
+        });
+
+        // Supprimer l'ancienne image lors de l'update
+        static::updating(function ($product) {
+            if ($product->isDirty('image') && $product->getOriginal('image')) {
+                Storage::disk('r2')->delete($product->getOriginal('image'));
+            }
+        });
+
+        // Supprimer l'image lors de la suppression du produit
+        static::deleting(function ($product) {
+            if ($product->image) {
+                Storage::disk('r2')->delete($product->image);
             }
         });
     }

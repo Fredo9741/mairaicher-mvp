@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Bundle extends Model
@@ -29,6 +30,20 @@ class Bundle extends Model
         static::creating(function ($bundle) {
             if (empty($bundle->slug)) {
                 $bundle->slug = Str::slug($bundle->name);
+            }
+        });
+
+        // Supprimer l'ancienne image lors de l'update
+        static::updating(function ($bundle) {
+            if ($bundle->isDirty('image') && $bundle->getOriginal('image')) {
+                Storage::disk('r2')->delete($bundle->getOriginal('image'));
+            }
+        });
+
+        // Supprimer l'image lors de la suppression du panier
+        static::deleting(function ($bundle) {
+            if ($bundle->image) {
+                Storage::disk('r2')->delete($bundle->image);
             }
         });
     }

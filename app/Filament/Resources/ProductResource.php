@@ -100,21 +100,11 @@ class ProductResource extends Resource
                             ->directory('products')
                             ->visibility('public')
                             ->imageEditor()
-                            ->saveUploadedFileUsing(function ($file) {
-                                $optimizer = app(\App\Services\ImageOptimizer::class);
-                                try {
-                                    return $optimizer->optimize(
-                                        $file,
-                                        disk: 'r2',
-                                        directory: 'products',
-                                        maxWidth: 1920,
-                                        quality: 80
-                                    );
-                                } catch (\Exception $e) {
-                                    \Log::error('Image optimization failed: ' . $e->getMessage());
-                                    // Fallback to default Filament upload
-                                    return $file->store('products', 'r2');
-                                }
+                            ->maxSize(10240)
+                            ->optimize('jpg')
+                            ->resize(1920, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize();
                             })
                             ->columnSpanFull(),
                     ]),
