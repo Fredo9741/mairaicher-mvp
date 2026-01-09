@@ -8,17 +8,10 @@
     <div class="relative bg-red-600 rounded-3xl shadow-2xl overflow-hidden mb-16">
         <!-- Image de fond -->
         <div class="absolute inset-0">
-            @if($hero && $hero->image)
-                <img src="{{ Storage::disk('r2')->url($hero->image) }}"
-                     alt="{{ $hero->title }}"
-                     class="w-full h-full object-cover"
-                     loading="eager">
-            @else
-                <img src="{{ asset('images/hero-reunion.jpg') }}"
-                     alt="Tomates fraîches"
-                     class="w-full h-full object-cover"
-                     loading="eager">
-            @endif
+            <img src="{{ ($hero && $hero->image) ? Storage::disk('r2')->url($hero->image) : asset('images/hero-reunion.jpg') }}"
+                 alt="{{ $hero->title ?? 'Tomates fraîches' }}"
+                 class="w-full h-full object-cover"
+                 loading="eager">
             <!-- Overlay léger pour meilleure lisibilité sans dénaturer les couleurs -->
             <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/50"></div>
         </div>
