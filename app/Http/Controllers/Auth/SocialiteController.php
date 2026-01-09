@@ -43,6 +43,7 @@ class SocialiteController extends Controller
             $user->update([
                 'provider' => $provider,
                 'provider_id' => $socialUser->getId(),
+                'avatar' => $socialUser->getAvatar(),
             ]);
         } else {
             // Create new user with customer role
@@ -53,6 +54,7 @@ class SocialiteController extends Controller
                 'role' => 'customer',
                 'provider' => $provider,
                 'provider_id' => $socialUser->getId(),
+                'avatar' => $socialUser->getAvatar(),
                 'email_verified_at' => now(),
             ]);
         }
