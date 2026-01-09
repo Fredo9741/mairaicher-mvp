@@ -114,7 +114,7 @@
 
     <!-- Paniers de saison -->
     @if($bundles->count() > 0)
-    <section id="paniers" class="mb-20">
+    <section id="paniers" class="mb-20" x-data="{ selectedBundle: null }">
         <div class="text-center mb-12">
             <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
                 <span>⭐</span>
@@ -203,14 +203,129 @@
                         </button>
                     </form>
 
-                    <a href="{{ route('bundles.show', $bundle) }}"
-                        class="block mt-4 text-center text-emerald-600 hover:text-emerald-700 font-semibold hover:underline transition-colors">
+                    <button @click="selectedBundle = {{ $bundle->id }}"
+                        class="block w-full mt-4 text-center text-emerald-600 hover:text-emerald-700 font-semibold hover:underline transition-colors">
                         Voir le détail du panier →
-                    </a>
+                    </button>
                 </div>
             </div>
             @endforeach
         </div>
+
+        <!-- Modale de détail du panier -->
+        @foreach($bundles as $bundle)
+        <div x-show="selectedBundle === {{ $bundle->id }}"
+             @click.away="selectedBundle = null"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 overflow-y-auto"
+             style="display: none;">
+
+            <!-- Overlay -->
+            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+            <!-- Contenu de la modale -->
+            <div class="relative min-h-screen flex items-center justify-center p-4">
+                <div @click.stop
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 transform scale-100"
+                     x-transition:leave-end="opacity-0 transform scale-95"
+                     class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden">
+
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-emerald-600 to-green-600 p-6 text-white">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">{{ $bundle->name }}</h3>
+                                <p class="text-emerald-50">{{ $bundle->description }}</p>
+                            </div>
+                            <button @click="selectedBundle = null"
+                                    class="text-white hover:text-gray-200 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Contenu -->
+                    <div class="p-6">
+                        <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"/>
+                            </svg>
+                            Contenu du panier
+                        </h4>
+
+                        <div class="space-y-3">
+                            @foreach($bundle->products as $product)
+                            <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <span class="text-2xl">
+                                        @if($product->category === 'legume')
+                                            🥬
+                                        @elseif($product->category === 'volaille')
+                                            🐓
+                                        @else
+                                            🥚
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-semibold text-gray-800">{{ $product->name }}</h5>
+                                    <p class="text-sm text-gray-600">{{ $product->pivot->quantity_included }} {{ $product->unit === 'kg' ? 'kg' : 'pièce(s)' }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-emerald-600">
+                                        {{ number_format(($product->price_cents * $product->pivot->quantity_included) / 100, 2, ',', ' ') }} €
+                                    </p>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Prix total -->
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-lg font-bold text-gray-800">Prix du panier</span>
+                                <span class="text-3xl font-bold text-emerald-600">
+                                    {{ number_format($bundle->price_cents / 100, 2, ',', ' ') }} €
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-2">
+                                Économie par rapport à l'achat séparé :
+                                @php
+                                    $totalSeparate = $bundle->products->sum(fn($p) => $p->price_cents * $p->pivot->quantity_included);
+                                    $savings = $totalSeparate - $bundle->price_cents;
+                                @endphp
+                                <span class="font-semibold text-emerald-600">{{ number_format($savings / 100, 2, ',', ' ') }} €</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="bg-gray-50 px-6 py-4 flex gap-3">
+                        <button @click="selectedBundle = null"
+                                class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-100 transition-all">
+                            Fermer
+                        </button>
+                        <button @click="selectedBundle = null; document.querySelector('[data-cart-form][action*=\"bundles/{{ $bundle->id }}\"] button[type=submit]').click()"
+                                class="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-green-700 transition-all shadow-md hover:shadow-lg">
+                            Ajouter au panier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach
     </section>
     @endif
 
