@@ -101,11 +101,7 @@ class ProductResource extends Resource
                             ->visibility('public')
                             ->imageEditor()
                             ->maxSize(10240)
-                            ->optimize('jpg')
-                            ->resize(1920, null, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize();
-                            })
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->columnSpanFull(),
                     ]),
             ]);

@@ -48,12 +48,8 @@ class HeroSectionResource extends Resource
                                 '21:9',
                             ])
                             ->maxSize(10240)
-                            ->optimize('jpg')
-                            ->resize(2560, null, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize();
-                            })
-                            ->helperText('Image optimisée automatiquement (max 2560px). Cloudflare convertira en WebP.')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->helperText('Utilisez l\'éditeur pour redimensionner. Max 10MB.')
                             ->columnSpanFull(),
                     ]),
 
