@@ -137,8 +137,9 @@
                 @if($bundle->image)
                 <!-- Image du panier -->
                 <div class="relative h-56 overflow-hidden bg-gray-50">
-                    <img src="https://files-maraicher.fredlabs.org/{{ $bundle->image }}"
+                    <img src="{{ Storage::disk('r2')->url($bundle->image) }}"
                          alt="{{ $bundle->name }}"
+                         loading="lazy"
                          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                     <div class="absolute top-3 left-3">
                         <span class="inline-flex items-center gap-2 bg-white/95 backdrop-blur-sm text-emerald-700 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
@@ -278,8 +279,9 @@
                 <div class="group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200 hover:-translate-y-1">
                     @if($product->image)
                     <div class="relative h-56 overflow-hidden bg-gray-50">
-                        <img src="https://files-maraicher.fredlabs.org/{{ $product->image }}"
+                        <img src="{{ Storage::disk('r2')->url($product->image) }}"
                              alt="{{ $product->name }}"
+                             loading="lazy"
                              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute top-3 right-3">
                             <span class="bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-2 rounded-full text-xs font-bold shadow-lg border border-gray-200">
