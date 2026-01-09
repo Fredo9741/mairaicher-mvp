@@ -47,6 +47,29 @@ class CheckoutController extends Controller
         try {
             DB::beginTransaction();
 
+            // Vérifier le stock avant de créer la commande
+            foreach ($cart as $item) {
+                if ($item['type'] === 'product') {
+                    $product = Product::find($item['id']);
+                    if (!$product) {
+                        throw new \Exception("Le produit '{$item['name']}' n'existe plus.");
+                    }
+                    if (!$product->isAvailable($item['quantity'])) {
+                        throw new \Exception($product->getStockErrorMessage());
+                    }
+                }
+
+                if ($item['type'] === 'bundle') {
+                    $bundle = Bundle::with('products')->find($item['id']);
+                    if (!$bundle) {
+                        throw new \Exception("Le panier '{$item['name']}' n'existe plus.");
+                    }
+                    if (!$bundle->isAvailable($item['quantity'])) {
+                        throw new \Exception($bundle->getStockErrorMessage($item['quantity']));
+                    }
+                }
+            }
+
             // Calculer le total
             $totalCents = 0;
             foreach ($cart as $item) {

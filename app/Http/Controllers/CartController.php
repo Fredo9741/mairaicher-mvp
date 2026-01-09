@@ -74,23 +74,31 @@ class CartController extends Controller
         ]);
 
         $quantity = (int) $validated['quantity'];
+        $cart = session()->get('cart', []);
+        $itemKey = 'bundle_' . $bundle->id;
 
-        if (!$bundle->isAvailable()) {
+        // Calculer la quantité totale demandée (panier + nouvelle quantité)
+        $currentQuantity = isset($cart[$itemKey]) ? $cart[$itemKey]['quantity'] : 0;
+        $totalQuantity = $currentQuantity + $quantity;
+
+        // Charger les produits avec leurs relations pour la vérification de stock
+        $bundle->load('products');
+
+        // Vérifier le stock avec la quantité totale de bundles
+        if (!$bundle->isAvailable($totalQuantity)) {
+            $errorMessage = $bundle->getStockErrorMessage($totalQuantity);
+
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Ce panier n\'est plus disponible.'
+                    'message' => $errorMessage
                 ], 400);
             }
-            return back()->with('error', 'Ce panier n\'est plus disponible.');
+            return back()->with('error', $errorMessage);
         }
 
-        $cart = session()->get('cart', []);
-
-        $itemKey = 'bundle_' . $bundle->id;
-
         if (isset($cart[$itemKey])) {
-            $cart[$itemKey]['quantity'] += $quantity;
+            $cart[$itemKey]['quantity'] = $totalQuantity;
         } else {
             $cart[$itemKey] = [
                 'type' => 'bundle',
@@ -130,12 +138,21 @@ class CartController extends Controller
             } else {
                 $newQuantity = (float) $validated['quantity'];
 
-                // Vérifier le stock uniquement pour les produits (pas les bundles)
+                // Vérifier le stock pour les produits
                 if ($cart[$itemKey]['type'] === 'product') {
                     $product = Product::find($cart[$itemKey]['id']);
 
                     if ($product && !$product->isAvailable($newQuantity)) {
                         return back()->with('error', $product->getStockErrorMessage());
+                    }
+                }
+
+                // Vérifier le stock pour les bundles
+                if ($cart[$itemKey]['type'] === 'bundle') {
+                    $bundle = Bundle::with('products')->find($cart[$itemKey]['id']);
+
+                    if ($bundle && !$bundle->isAvailable((int) $newQuantity)) {
+                        return back()->with('error', $bundle->getStockErrorMessage((int) $newQuantity));
                     }
                 }
 

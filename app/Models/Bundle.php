@@ -65,19 +65,42 @@ class Bundle extends Model
         $this->price_cents = $value * 100;
     }
 
-    public function isAvailable(): bool
+    public function isAvailable(int $bundleQuantity = 1): bool
     {
         if (!$this->is_active) {
             return false;
         }
 
         foreach ($this->products as $product) {
-            $quantityNeeded = $product->pivot->quantity_included;
+            $quantityNeeded = $product->pivot->quantity_included * $bundleQuantity;
             if (!$product->isAvailable($quantityNeeded)) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    public function getStockErrorMessage(int $bundleQuantity = 1): string
+    {
+        if (!$this->is_active) {
+            return 'Ce panier n\'est plus disponible.';
+        }
+
+        foreach ($this->products as $product) {
+            $quantityNeeded = $product->pivot->quantity_included * $bundleQuantity;
+            if (!$product->isAvailable($quantityNeeded)) {
+                $availableStock = $product->stock;
+                $maxBundles = floor($availableStock / $product->pivot->quantity_included);
+
+                if ($maxBundles == 0) {
+                    return "Stock insuffisant pour le panier '{$this->name}'. Le produit '{$product->name}' n'est plus disponible en quantité suffisante.";
+                }
+
+                return "Stock insuffisant pour {$bundleQuantity} panier(s) '{$this->name}'. Maximum disponible : {$maxBundles} panier(s) (limité par le stock de '{$product->name}').";
+            }
+        }
+
+        return '';
     }
 }
