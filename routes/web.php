@@ -4,11 +4,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Auth\SocialiteController;
 
 // Authentification - Redirection vers Filament
 Route::get('/login', function () {
     return redirect('/admin/login');
 })->name('login');
+
+// Social Authentication
+Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('socialite.redirect');
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->name('socialite.callback');
 
 Route::get('/register', function () {
     return redirect('/admin/register');
