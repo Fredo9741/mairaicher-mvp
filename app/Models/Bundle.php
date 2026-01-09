@@ -87,18 +87,28 @@ class Bundle extends Model
             return 'Ce panier n\'est plus disponible.';
         }
 
+        // Trouver le produit le plus limitant
+        $mostLimitingProduct = null;
+        $minAvailableBundles = PHP_INT_MAX;
+
         foreach ($this->products as $product) {
             $quantityNeeded = $product->pivot->quantity_included * $bundleQuantity;
-            if (!$product->isAvailable($quantityNeeded)) {
-                $availableStock = $product->stock;
-                $maxBundles = floor($availableStock / $product->pivot->quantity_included);
+            $availableStock = $product->stock;
+            $maxBundles = floor($availableStock / $product->pivot->quantity_included);
 
-                if ($maxBundles == 0) {
-                    return "Stock insuffisant pour le panier '{$this->name}'. Le produit '{$product->name}' n'est plus disponible en quantité suffisante.";
-                }
-
-                return "Stock insuffisant pour {$bundleQuantity} panier(s) '{$this->name}'. Maximum disponible : {$maxBundles} panier(s) (limité par le stock de '{$product->name}').";
+            if ($maxBundles < $minAvailableBundles) {
+                $minAvailableBundles = $maxBundles;
+                $mostLimitingProduct = $product;
             }
+        }
+
+        // Si on a trouvé un produit limitant
+        if ($mostLimitingProduct && $minAvailableBundles < $bundleQuantity) {
+            if ($minAvailableBundles == 0) {
+                return "Stock insuffisant pour le panier '{$this->name}'. Le produit '{$mostLimitingProduct->name}' n'est plus disponible en quantité suffisante.";
+            }
+
+            return "Stock insuffisant pour {$bundleQuantity} panier(s) '{$this->name}'. Maximum disponible : {$minAvailableBundles} panier(s) (limité par le stock de '{$mostLimitingProduct->name}').";
         }
 
         return '';
