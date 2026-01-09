@@ -63,7 +63,7 @@ class SocialiteController extends Controller
         Auth::login($user);
 
         // Redirect based on role
-        if ($user->canAccessPanel(null)) {
+        if ($user->isAdmin()) {
             return redirect('/admin');
         }
 

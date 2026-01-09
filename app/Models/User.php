@@ -83,4 +83,12 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->role === 'customer';
     }
+
+    /**
+     * Check if user can access admin panel (helper for views)
+     */
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['developer', 'maraicher']);
+    }
 }

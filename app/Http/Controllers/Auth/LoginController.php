@@ -50,7 +50,7 @@ class LoginController extends Controller
      */
     protected function redirectBasedOnRole($user)
     {
-        if ($user->canAccessPanel(null)) {
+        if ($user->isAdmin()) {
             return redirect()->intended('/admin');
         }
 
