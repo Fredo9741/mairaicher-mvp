@@ -28,6 +28,16 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'item_id')->where('item_type', 'product');
+    }
+
+    public function bundle(): BelongsTo
+    {
+        return $this->belongsTo(Bundle::class, 'item_id')->where('item_type', 'bundle');
+    }
+
     public function getUnitPriceAttribute(): float
     {
         return $this->unit_price_cents / 100;

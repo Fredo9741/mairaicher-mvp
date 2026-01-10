@@ -22,10 +22,12 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
         'role',
         'provider',
         'provider_id',
+        'avatar',
     ];
 
     /**
@@ -81,5 +83,13 @@ class User extends Authenticatable implements FilamentUser
     public function isCustomer(): bool
     {
         return $this->role === 'customer';
+    }
+
+    /**
+     * Check if user can access admin panel (helper for views)
+     */
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['developer', 'maraicher']);
     }
 }

@@ -26,9 +26,11 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            // Rediriger vers /login au lieu d'afficher la page de login Filament
+            ->loginRouteSlug('/login')
             ->brandName('Domaine des Papangues')
             ->homeUrl('/')
+            ->authGuard('web')
             ->colors([
                 'primary' => Color::Green,
             ])
