@@ -98,66 +98,59 @@
                 <!-- Orders List -->
                 <div class="divide-y divide-gray-200">
                     @forelse($orders as $order)
-                        <div class="p-6 hover:bg-gray-50 transition-colors">
-                            <!-- Order Header -->
-                            <div class="flex flex-wrap items-center justify-between mb-4">
-                                <div>
-                                    <h3 class="font-bold text-gray-900">
-                                        Commande #{{ $order->order_number }}
-                                    </h3>
-                                    <p class="text-sm text-gray-600">{{ $order->created_at->format('d/m/Y à H:i') }}</p>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                        @if($order->status === 'completed') bg-green-100 text-green-800
-                                        @elseif($order->status === 'processing') bg-blue-100 text-blue-800
-                                        @elseif($order->status === 'cancelled') bg-red-100 text-red-800
-                                        @else bg-yellow-100 text-yellow-800
-                                        @endif">
-                                        {{ ucfirst($order->status) }}
-                                    </span>
-                                    <span class="text-lg font-bold text-emerald-600">{{ number_format($order->total_price, 2) }} €</span>
-                                </div>
-                            </div>
-
-                            <!-- Pickup Info -->
-                            @if($order->pickupSlot && $order->pickup_date)
-                                <div class="mb-4 p-3 bg-emerald-50 rounded-lg flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="text-sm font-medium text-emerald-800">
-                                        Retrait prévu le {{ $order->pickup_date->format('d/m/Y') }}
-                                        de {{ \Carbon\Carbon::parse($order->pickupSlot->start_time)->format('H:i') }}
-                                        à {{ \Carbon\Carbon::parse($order->pickupSlot->end_time)->format('H:i') }}
-                                    </span>
-                                </div>
-                            @endif
-
-                            <!-- Order Items -->
-                            <div class="space-y-2">
-                                @foreach($order->items as $item)
-                                    <div class="flex items-center justify-between text-sm">
-                                        <span class="text-gray-700">
-                                            @if($item->item_type === 'product')
-                                                {{ $item->item_name }}
-                                            @elseif($item->item_type === 'bundle')
-                                                🎁 {{ $item->item_name }}
-                                            @endif
-                                            <span class="text-gray-500">× {{ $item->quantity }}</span>
+                        <a href="{{ route('checkout.confirmation', $order) }}" class="block p-6 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <div class="flex items-center justify-between">
+                                <!-- Order Info -->
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <h3 class="font-bold text-gray-900">
+                                            #{{ strtoupper(substr($order->order_number, -5)) }}
+                                        </h3>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                            @if($order->status === 'completed') bg-green-100 text-green-800
+                                            @elseif($order->status === 'processing') bg-blue-100 text-blue-800
+                                            @elseif($order->status === 'cancelled') bg-red-100 text-red-800
+                                            @else bg-yellow-100 text-yellow-800
+                                            @endif">
+                                            {{ ucfirst($order->status) }}
                                         </span>
-                                        <span class="font-medium text-gray-900">{{ number_format($item->total_price, 2) }} €</span>
                                     </div>
-                                @endforeach
-                            </div>
 
-                            <!-- Actions -->
-                            <div class="mt-4 pt-4 border-t border-gray-200 flex gap-2">
-                                <a href="{{ route('checkout.confirmation', $order) }}" class="text-emerald-600 hover:text-emerald-700 text-sm font-medium transition-colors">
-                                    Voir les détails →
-                                </a>
+                                    <div class="flex items-center gap-4 text-sm text-gray-600">
+                                        <div class="flex items-center gap-1.5">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            <span>{{ $order->created_at->format('d/m/Y') }}</span>
+                                        </div>
+
+                                        @if($order->pickupSlot && $order->pickup_date)
+                                            <div class="flex items-center gap-1.5">
+                                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span class="text-emerald-700">Retrait le {{ $order->pickup_date->format('d/m/Y') }}</span>
+                                            </div>
+                                        @endif
+
+                                        <div class="flex items-center gap-1.5">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                            </svg>
+                                            <span>{{ $order->items->count() }} article(s)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Price and Arrow -->
+                                <div class="flex items-center gap-4">
+                                    <span class="text-xl font-bold text-emerald-600">{{ number_format($order->total_price, 2) }} €</span>
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     @empty
                         <div class="p-12 text-center">
                             <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
