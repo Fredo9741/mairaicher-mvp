@@ -5,16 +5,36 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\UniversalLoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ProfileController;
 
-// Universal Authentication
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+// ============================================
+// AUTHENTICATION UNIVERSELLE
+// ============================================
+// Une seule page de login pour tous les utilisateurs
+// Redirection automatique selon le rôle après authentification
+Route::get('/login', [UniversalLoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [UniversalLoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [UniversalLoginController::class, 'logout'])->name('logout');
 
-// Social Authentication
+// Inscription
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
+
+// OAuth Social Authentication (Google & Facebook)
 Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('socialite.redirect');
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->name('socialite.callback');
+
+// ============================================
+// PROFIL UTILISATEUR (Authentification requise)
+// ============================================
+Route::middleware('auth')->group(function () {
+    Route::get('/profil', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profil/modifier', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profil', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profil/mot-de-passe', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+});
 
 // Page d'accueil
 Route::get('/', [HomeController::class, 'index'])->name('home');

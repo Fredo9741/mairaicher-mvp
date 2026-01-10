@@ -24,7 +24,10 @@ class CheckoutController extends Controller
             ->orderBy('start_time')
             ->get();
 
-        return view('checkout.index', compact('cart', 'pickupSlots'));
+        // Récupérer l'utilisateur connecté pour pré-remplir le formulaire
+        $user = auth()->user();
+
+        return view('checkout.index', compact('cart', 'pickupSlots', 'user'));
     }
 
     public function store(Request $request)

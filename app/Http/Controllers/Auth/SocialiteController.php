@@ -19,6 +19,13 @@ class SocialiteController extends Controller
     {
         $this->validateProvider($provider);
 
+        // Désactiver la vérification SSL en développement local
+        if (config('app.env') === 'local') {
+            return Socialite::driver($provider)
+                ->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))
+                ->redirect();
+        }
+
         return Socialite::driver($provider)->redirect();
     }
 
@@ -30,9 +37,18 @@ class SocialiteController extends Controller
         $this->validateProvider($provider);
 
         try {
-            $socialUser = Socialite::driver($provider)->user();
+            // Désactiver la vérification SSL en développement local
+            if (config('app.env') === 'local') {
+                $socialUser = Socialite::driver($provider)
+                    ->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))
+                    ->user();
+            } else {
+                $socialUser = Socialite::driver($provider)->user();
+            }
         } catch (\Exception $e) {
-            return redirect()->route('login')->with('error', 'Échec de l\'authentification avec ' . ucfirst($provider));
+            \Log::error('Google OAuth Error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            return redirect()->route('login')->with('error', 'Échec de l\'authentification avec ' . ucfirst($provider) . ': ' . $e->getMessage());
         }
 
         // Find or create user

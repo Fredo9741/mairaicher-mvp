@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Connexion')
+@section('title', 'Créer un compte')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,17 +12,43 @@
                     <span class="text-5xl">🌿</span>
                 </div>
                 <h2 class="text-3xl font-extrabold text-gray-900">
-                    Connexion
+                    Créer un compte
                 </h2>
                 <p class="mt-2 text-sm text-gray-600">
-                    Accédez à votre espace personnel
+                    Rejoignez-nous pour profiter de nos produits frais
                 </p>
             </div>
 
-            <!-- Login Form -->
+            <!-- Registration Form -->
             <div class="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
-                <form method="POST" action="{{ route('login.post') }}" class="space-y-5">
+                <form method="POST" action="{{ route('register.post') }}" class="space-y-5">
                     @csrf
+
+                    <!-- Name -->
+                    <div>
+                        <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Nom complet
+                        </label>
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            autocomplete="name"
+                            required
+                            autofocus
+                            value="{{ old('name') }}"
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all @error('name') border-red-500 ring-2 ring-red-200 @enderror"
+                            placeholder="Jean Dupont"
+                        >
+                        @error('name')
+                            <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
+                                </svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
 
                     <!-- Email -->
                     <div>
@@ -35,12 +61,35 @@
                             type="email"
                             autocomplete="email"
                             required
-                            autofocus
                             value="{{ old('email') }}"
                             class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all @error('email') border-red-500 ring-2 ring-red-200 @enderror"
                             placeholder="vous@exemple.com"
                         >
                         @error('email')
+                            <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
+                                </svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Téléphone (optionnel)
+                        </label>
+                        <input
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            autocomplete="tel"
+                            value="{{ old('phone') }}"
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all @error('phone') border-red-500 ring-2 ring-red-200 @enderror"
+                            placeholder="+262 692 XX XX XX"
+                        >
+                        @error('phone')
                             <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
@@ -59,7 +108,7 @@
                             id="password"
                             name="password"
                             type="password"
-                            autocomplete="current-password"
+                            autocomplete="new-password"
                             required
                             class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all @error('password') border-red-500 ring-2 ring-red-200 @enderror"
                             placeholder="••••••••"
@@ -72,33 +121,35 @@
                                 {{ $message }}
                             </p>
                         @enderror
+                        <p class="mt-1 text-xs text-gray-500">Minimum 8 caractères</p>
                     </div>
 
-                    <!-- Remember Me -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <input
-                                id="remember"
-                                name="remember"
-                                type="checkbox"
-                                class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded cursor-pointer"
-                            >
-                            <label for="remember" class="ml-2 block text-sm text-gray-700 cursor-pointer select-none">
-                                Se souvenir de moi
-                            </label>
-                        </div>
+                    <!-- Password Confirmation -->
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Confirmer le mot de passe
+                        </label>
+                        <input
+                            id="password_confirmation"
+                            name="password_confirmation"
+                            type="password"
+                            autocomplete="new-password"
+                            required
+                            class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                            placeholder="••••••••"
+                        >
                     </div>
 
                     <!-- Submit Button -->
-                    <div>
+                    <div class="pt-2">
                         <button
                             type="submit"
                             class="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-lg shadow-md text-base font-semibold text-white bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                             </svg>
-                            Se connecter
+                            Créer mon compte
                         </button>
                     </div>
                 </form>
@@ -110,7 +161,7 @@
                             <div class="w-full border-t border-gray-200"></div>
                         </div>
                         <div class="relative flex justify-center text-xs uppercase">
-                            <span class="px-3 bg-white text-gray-500 font-medium">Ou continuer avec</span>
+                            <span class="px-3 bg-white text-gray-500 font-medium">Ou s'inscrire avec</span>
                         </div>
                     </div>
 
@@ -139,11 +190,11 @@
                 <!-- Divider -->
                 <div class="mt-6 pt-6 border-t border-gray-100">
                     <div class="text-center space-y-3">
-                        <!-- Register Link -->
+                        <!-- Login Link -->
                         <p class="text-sm text-gray-600">
-                            Pas encore de compte ?
-                            <a href="{{ route('register') }}" class="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">
-                                Créer un compte
+                            Vous avez déjà un compte ?
+                            <a href="{{ route('login') }}" class="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">
+                                Se connecter
                             </a>
                         </p>
 
