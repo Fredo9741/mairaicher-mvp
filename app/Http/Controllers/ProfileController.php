@@ -18,7 +18,7 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         // Récupérer les commandes de l'utilisateur avec les informations liées
-        $orders = Order::where('email', $user->email)
+        $orders = Order::where('customer_email', $user->email)
             ->with(['items.product', 'items.bundle', 'pickupSlot'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);

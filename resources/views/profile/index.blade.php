@@ -116,18 +116,18 @@
                                         @endif">
                                         {{ ucfirst($order->status) }}
                                     </span>
-                                    <span class="text-lg font-bold text-emerald-600">{{ number_format($order->total_amount, 2) }} €</span>
+                                    <span class="text-lg font-bold text-emerald-600">{{ number_format($order->total_price, 2) }} €</span>
                                 </div>
                             </div>
 
                             <!-- Pickup Info -->
-                            @if($order->pickupSlot)
+                            @if($order->pickupSlot && $order->pickup_date)
                                 <div class="mb-4 p-3 bg-emerald-50 rounded-lg flex items-center gap-2">
                                     <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                     <span class="text-sm font-medium text-emerald-800">
-                                        Retrait prévu le {{ \Carbon\Carbon::parse($order->pickupSlot->date)->format('d/m/Y') }}
+                                        Retrait prévu le {{ $order->pickup_date->format('d/m/Y') }}
                                         de {{ \Carbon\Carbon::parse($order->pickupSlot->start_time)->format('H:i') }}
                                         à {{ \Carbon\Carbon::parse($order->pickupSlot->end_time)->format('H:i') }}
                                     </span>
@@ -139,14 +139,14 @@
                                 @foreach($order->items as $item)
                                     <div class="flex items-center justify-between text-sm">
                                         <span class="text-gray-700">
-                                            @if($item->product)
-                                                {{ $item->product->name }}
-                                            @elseif($item->bundle)
-                                                🎁 {{ $item->bundle->name }}
+                                            @if($item->item_type === 'product')
+                                                {{ $item->item_name }}
+                                            @elseif($item->item_type === 'bundle')
+                                                🎁 {{ $item->item_name }}
                                             @endif
                                             <span class="text-gray-500">× {{ $item->quantity }}</span>
                                         </span>
-                                        <span class="font-medium text-gray-900">{{ number_format($item->price * $item->quantity, 2) }} €</span>
+                                        <span class="font-medium text-gray-900">{{ number_format($item->total_price, 2) }} €</span>
                                     </div>
                                 @endforeach
                             </div>
