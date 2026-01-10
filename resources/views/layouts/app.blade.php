@@ -8,7 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="{{ asset('js/cart.js') }}" defer></script>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 flex flex-col min-h-screen">
     <!-- Navigation -->
     <nav class="bg-white shadow-lg sticky top-0 z-50" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -237,12 +237,12 @@
     @endif
 
     <!-- Contenu principal -->
-    <main class="py-8">
+    <main class="flex-grow py-8">
         @yield('content')
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white mt-12">
+    <footer class="bg-gray-800 text-white mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="text-center">
                 <p>&copy; {{ date('Y') }} Domaine des Papangues - Tous droits réservés</p>
