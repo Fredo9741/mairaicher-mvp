@@ -360,7 +360,7 @@
                                 class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-100 transition-all">
                             Fermer
                         </button>
-                        <button @click="selectedBundle = null; document.querySelector('[data-cart-form][action*=\"bundles/{{ $bundle->id }}\"] button[type=submit]').click()"
+                        <button @click="selectedBundle = null; document.querySelector('[data-cart-form][action*=\'bundles/{{ $bundle->id }}\'] button[type=submit]').click()"
                                 class="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-green-700 transition-all shadow-md hover:shadow-lg">
                             Ajouter au panier
                         </button>
