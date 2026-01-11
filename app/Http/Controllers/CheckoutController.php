@@ -21,8 +21,8 @@ class CheckoutController extends Controller
         }
 
         $pickupSlots = PickupSlot::where('is_active', true)
-            ->orderBy('start_time')
-            ->get();
+        ->orderBy('name') // On remplace 'start_time' par 'name'
+        ->get();
 
         // Récupérer l'utilisateur connecté pour pré-remplir le formulaire
         $user = auth()->user();
