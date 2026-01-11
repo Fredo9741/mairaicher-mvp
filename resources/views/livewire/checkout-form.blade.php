@@ -372,22 +372,22 @@
                                 },
 
                                 initFlatpickr() {
-                                    if (this.flatpickrInstance) {
+                                    // Vérification ultra-sécurisée de l'instance
+                                    if (this.flatpickrInstance && typeof this.flatpickrInstance.destroy === 'function') {
                                         this.flatpickrInstance.destroy();
                                     }
 
                                     // Sécurité : on s'assure que availableDays est un tableau utilisable
                                     const days = Array.isArray(this.availableDays) ? this.availableDays : [];
 
+                                    // On stocke la NOUVELLE instance
                                     this.flatpickrInstance = flatpickr(this.$refs.dateInput, {
                                         locale: typeof flatpickrFrench !== 'undefined' ? flatpickrFrench : 'fr',
                                         dateFormat: 'Y-m-d',
                                         minDate: 'today',
                                         defaultDate: this.$wire.pickupDate,
                                         enable: days.length > 0 ? [
-                                            (date) => {
-                                                return days.includes(date.getDay());
-                                            }
+                                            (date) => days.includes(date.getDay())
                                         ] : undefined,
                                         onChange: (selectedDates, dateStr) => {
                                             this.$wire.set('pickupDate', dateStr);
