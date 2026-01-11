@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Domaine des Papangues')</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌿</text></svg>">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="{{ asset('js/cart.js') }}" defer></script>
+    @stack('styles')
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
     <!-- Navigation -->
@@ -116,7 +118,7 @@
                     @endauth
                 </div>
 
-                <!-- Mobile menu button + Cart -->
+                <!-- Mobile menu button + Cart + User -->
                 <div class="md:hidden flex items-center gap-2">
                     <a href="{{ route('cart.index') }}" class="relative text-gray-700 p-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,6 +130,20 @@
                         @endphp
                         <span data-cart-count class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-emerald-600 rounded-full {{ $itemCount > 0 ? '' : 'hidden' }}">{{ $itemCount > 0 ? $itemCount : '' }}</span>
                     </a>
+
+                    @auth
+                        <a href="{{ route('profile.index') }}" class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
+                            @if(auth()->user()->avatar)
+                                <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border-2 border-emerald-500">
+                            @else
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center text-white font-semibold text-sm">
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                </div>
+                            @endif
+                            <span class="text-sm font-medium text-gray-900 max-w-[80px] truncate">{{ auth()->user()->name }}</span>
+                        </a>
+                    @endauth
+
                     <button @click="open = !open" class="text-gray-700 p-2">
                         <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -147,41 +163,29 @@
                     Accueil
                 </a>
                 @auth
-                    <div class="px-3 py-3 border-b border-gray-200 flex items-center gap-3">
-                        @if(auth()->user()->avatar)
-                            <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
-                        @else
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center text-white font-semibold">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                            </div>
-                        @endif
-                        <div>
-                            <p class="font-semibold text-gray-900">{{ auth()->user()->name }}</p>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
-                                @if(auth()->user()->role === 'developer') bg-purple-100 text-purple-800
-                                @elseif(auth()->user()->role === 'maraicher') bg-blue-100 text-blue-800
-                                @else bg-gray-100 text-gray-800
-                                @endif">
-                                {{ ucfirst(auth()->user()->role) }}
-                            </span>
-                        </div>
-                    </div>
-                    <a href="{{ route('profile.index') }}" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 font-medium">
-                        Mon profil
-                    </a>
                     @if(auth()->user()->isAdmin())
-                        <a href="/admin" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 font-medium">
-                            Admin
+                        <a href="/admin" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 font-medium flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Administration
                         </a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full text-left px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 font-medium">
+                        <button type="submit" class="w-full text-left px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 font-medium flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
                             Déconnexion
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 font-medium">
+                    <a href="{{ route('login') }}" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 font-medium flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                        </svg>
                         Connexion
                     </a>
                 @endauth
@@ -250,5 +254,6 @@
             </div>
         </div>
     </footer>
+    @stack('scripts')
 </body>
 </html>

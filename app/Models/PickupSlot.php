@@ -9,14 +9,17 @@ class PickupSlot extends Model
 {
     protected $fillable = [
         'name',
-        'start_time',
-        'end_time',
+        'lat',
+        'lng',
+        'address',
+        'working_hours',
         'is_active',
     ];
 
     protected $casts = [
-        'start_time' => 'datetime:H:i',
-        'end_time' => 'datetime:H:i',
+        'lat' => 'decimal:8',
+        'lng' => 'decimal:8',
+        'working_hours' => 'array',
         'is_active' => 'boolean',
     ];
 

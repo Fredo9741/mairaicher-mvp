@@ -96,58 +96,86 @@
                 </div>
 
                 <!-- Orders List -->
-                <div class="divide-y divide-gray-200">
+                <div class="p-4 sm:p-6 space-y-4">
                     @forelse($orders as $order)
-                        <a href="{{ route('checkout.confirmation', $order) }}" class="block p-6 hover:bg-gray-50 transition-colors cursor-pointer">
-                            <div class="flex items-center justify-between">
-                                <!-- Order Info -->
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <h3 class="font-bold text-gray-900">
-                                            #{{ strtoupper(substr($order->order_number, -5)) }}
+                        <a href="{{ route('checkout.confirmation', $order) }}" class="block group">
+                            <div class="bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-xl p-4 sm:p-6 hover:shadow-md hover:border-emerald-300 transition-all duration-200">
+                                <!-- Header Row -->
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                                    <div class="flex items-center gap-3 flex-wrap">
+                                        <h3 class="font-bold text-lg text-gray-900">
+                                            #{{ strtoupper(substr($order->order_number, -8)) }}
                                         </h3>
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            @if($order->status === 'completed') bg-green-100 text-green-800
-                                            @elseif($order->status === 'processing') bg-blue-100 text-blue-800
-                                            @elseif($order->status === 'cancelled') bg-red-100 text-red-800
-                                            @else bg-yellow-100 text-yellow-800
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                                            @if($order->status === 'completed') bg-green-100 text-green-800 ring-1 ring-green-200
+                                            @elseif($order->status === 'processing') bg-blue-100 text-blue-800 ring-1 ring-blue-200
+                                            @elseif($order->status === 'cancelled') bg-red-100 text-red-800 ring-1 ring-red-200
+                                            @else bg-yellow-100 text-yellow-800 ring-1 ring-yellow-200
                                             @endif">
-                                            {{ ucfirst($order->status) }}
+                                            @if($order->status === 'completed')
+                                                ✓ Terminée
+                                            @elseif($order->status === 'processing')
+                                                ⏳ En cours
+                                            @elseif($order->status === 'cancelled')
+                                                ✕ Annulée
+                                            @else
+                                                {{ ucfirst($order->status) }}
+                                            @endif
                                         </span>
                                     </div>
-
-                                    <div class="flex items-center gap-4 text-sm text-gray-600">
-                                        <div class="flex items-center gap-1.5">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                            </svg>
-                                            <span>{{ $order->created_at->format('d/m/Y') }}</span>
-                                        </div>
-
-                                        @if($order->pickupSlot && $order->pickup_date)
-                                            <div class="flex items-center gap-1.5">
-                                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                </svg>
-                                                <span class="text-emerald-700">Retrait le {{ $order->pickup_date->format('d/m/Y') }}</span>
-                                            </div>
-                                        @endif
-
-                                        <div class="flex items-center gap-1.5">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                                            </svg>
-                                            <span>{{ $order->items->count() }} article(s)</span>
-                                        </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-2xl font-bold text-emerald-600">{{ number_format($order->total_price, 2) }} €</span>
+                                        <svg class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
                                     </div>
                                 </div>
 
-                                <!-- Price and Arrow -->
-                                <div class="flex items-center gap-4">
-                                    <span class="text-xl font-bold text-emerald-600">{{ number_format($order->total_price, 2) }} €</span>
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                    </svg>
+                                <!-- Details Grid -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                                    <!-- Date de commande -->
+                                    <div class="flex items-start gap-2">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Date de commande</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $order->created_at->format('d/m/Y à H:i') }}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Date de retrait -->
+                                    @if($order->pickupSlot && $order->pickup_date)
+                                        <div class="flex items-start gap-2">
+                                            <div class="flex-shrink-0 w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500 font-medium">Retrait prévu</p>
+                                                <p class="text-sm font-semibold text-emerald-700">
+                                                    {{ $order->pickup_date->format('d/m/Y') }}
+                                                    <span class="text-xs text-gray-600">{{ $order->pickupSlot->time_range }}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <!-- Nombre d'articles -->
+                                    <div class="flex items-start gap-2">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Articles</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $order->items->count() }} produit{{ $order->items->count() > 1 ? 's' : '' }}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </a>

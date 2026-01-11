@@ -39,7 +39,40 @@
                     <h2 class="text-lg font-bold text-gray-800 mb-3">Informations de retrait</h2>
                     <div class="space-y-2 text-sm">
                         <p><span class="font-medium">Date:</span> {{ \Carbon\Carbon::parse($order->pickup_date)->format('d/m/Y') }}</p>
-                        <p><span class="font-medium">Créneau:</span> {{ $order->pickupSlot->name }}</p>
+
+                        @if($order->pickupSlot)
+                            <p><span class="font-medium">Lieu:</span> {{ $order->pickupSlot->name }}</p>
+
+                            @if($order->pickupSlot->address)
+                                <p><span class="font-medium">Adresse:</span> {{ $order->pickupSlot->address }}</p>
+                            @endif
+
+                            @if($order->pickupSlot->lat && $order->pickupSlot->lng)
+                                <p>
+                                    <span class="font-medium">GPS:</span>
+                                    <a href="https://www.google.com/maps?q={{ $order->pickupSlot->lat }},{{ $order->pickupSlot->lng }}"
+                                       target="_blank"
+                                       class="text-green-600 hover:text-green-700 underline">
+                                        Voir sur la carte
+                                    </a>
+                                </p>
+                            @endif
+
+                            @if($order->pickupSlot->working_hours && !empty($order->pickupSlot->working_hours))
+                                @php
+                                    $dayOfWeek = strtolower(\Carbon\Carbon::parse($order->pickup_date)->locale('en')->dayName);
+                                    $daySchedule = collect($order->pickupSlot->working_hours)->firstWhere('day', $dayOfWeek);
+                                @endphp
+
+                                @if($daySchedule && (!isset($daySchedule['closed']) || !$daySchedule['closed']))
+                                    <p>
+                                        <span class="font-medium">Horaires du jour:</span>
+                                        {{ substr($daySchedule['open'], 0, 5) }} - {{ substr($daySchedule['close'], 0, 5) }}
+                                    </p>
+                                @endif
+                            @endif
+                        @endif
+
                         @if($order->notes)
                             <p><span class="font-medium">Notes:</span> {{ $order->notes }}</p>
                         @endif
@@ -47,7 +80,7 @@
 
                     <div class="mt-4 p-3 bg-blue-50 rounded-md">
                         <p class="text-xs text-blue-800">
-                            <strong>Important:</strong> Veuillez vous présenter à l'heure indiquée pour récupérer votre commande.
+                            <strong>Important:</strong> Veuillez vous présenter aux horaires indiqués pour récupérer votre commande.
                         </p>
                     </div>
                 </div>
