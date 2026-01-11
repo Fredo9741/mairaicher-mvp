@@ -236,19 +236,39 @@ class CheckoutForm extends Component
      */
     public function submitOrder()
     {
-        // Validation
-        $this->validate();
+        \Log::info('=== DÉBUT SUBMITORDER ===');
+        \Log::info('Données du formulaire:', [
+            'customer_name' => $this->customer_name,
+            'customer_email' => $this->customer_email,
+            'customer_phone' => $this->customer_phone,
+            'pickup_slot_id' => $this->selectedPickupSlotId,
+            'pickup_date' => $this->pickupDate,
+            'selected_time_slot' => $this->selectedTimeSlot,
+            'cart_items_count' => count($this->cart),
+            'total' => $this->total,
+        ]);
 
         try {
+            \Log::info('Début de la validation');
+            // Validation
+            $this->validate();
+            \Log::info('Validation réussie');
+
+            \Log::info('Début de la transaction DB');
             DB::beginTransaction();
 
             // Vérifier le stock avant de créer la commande
-            foreach ($this->cart as $item) {
+            \Log::info('Vérification du stock pour ' . count($this->cart) . ' articles');
+            foreach ($this->cart as $index => $item) {
+                \Log::info("Vérification article #{$index}: {$item['name']} (type: {$item['type']})");
+
                 if ($item['type'] === 'product') {
                     $product = Product::find($item['id']);
                     if (!$product) {
                         throw new \Exception("Le produit '{$item['name']}' n'existe plus.");
                     }
+                    \Log::info("Produit trouvé: {$product->name}, stock: {$product->stock_quantity}");
+
                     if (!$product->isAvailable($item['quantity'])) {
                         throw new \Exception($product->getStockErrorMessage());
                     }
@@ -259,14 +279,18 @@ class CheckoutForm extends Component
                     if (!$bundle) {
                         throw new \Exception("Le panier '{$item['name']}' n'existe plus.");
                     }
+                    \Log::info("Panier trouvé: {$bundle->name}");
+
                     if (!$bundle->isAvailable($item['quantity'])) {
                         throw new \Exception($bundle->getStockErrorMessage($item['quantity']));
                     }
                 }
             }
+            \Log::info('Vérification du stock terminée avec succès');
 
             // Créer la commande
-            $order = Order::create([
+            \Log::info('Création de la commande dans la DB');
+            $orderData = [
                 'customer_name' => $this->customer_name,
                 'customer_email' => $this->customer_email,
                 'customer_phone' => $this->customer_phone,
@@ -275,10 +299,17 @@ class CheckoutForm extends Component
                 'pickup_slot_id' => $this->selectedPickupSlotId,
                 'status' => 'pending',
                 'notes' => $this->notes,
-            ]);
+            ];
+            \Log::info('Données de la commande:', $orderData);
+
+            $order = Order::create($orderData);
+            \Log::info("Commande créée avec succès: ID={$order->id}, Numéro={$order->order_number}");
 
             // Créer les items et réserver le stock
-            foreach ($this->cart as $item) {
+            \Log::info('Création des OrderItems');
+            foreach ($this->cart as $index => $item) {
+                \Log::info("Création OrderItem #{$index} pour article: {$item['name']}");
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'item_type' => $item['type'],
@@ -293,6 +324,7 @@ class CheckoutForm extends Component
                 if ($item['type'] === 'product') {
                     $product = Product::find($item['id']);
                     if ($product) {
+                        \Log::info("Décrémentation du stock pour: {$product->name}, quantité: {$item['quantity']}");
                         $product->decrementStock($item['quantity']);
                     }
                 }
@@ -301,25 +333,62 @@ class CheckoutForm extends Component
                 if ($item['type'] === 'bundle') {
                     $bundle = Bundle::with('products')->find($item['id']);
                     if ($bundle) {
+                        \Log::info("Décrémentation du stock pour le panier: {$bundle->name}");
                         foreach ($bundle->products as $product) {
                             $quantityNeeded = $product->pivot->quantity_included * $item['quantity'];
+                            \Log::info("  - Produit: {$product->name}, quantité: {$quantityNeeded}");
                             $product->decrementStock($quantityNeeded);
                         }
                     }
                 }
             }
+            \Log::info('Tous les OrderItems créés avec succès');
 
+            \Log::info('Commit de la transaction');
             DB::commit();
+            \Log::info('Transaction commitée avec succès');
 
             // Vider le panier
+            \Log::info('Vidage du panier de la session');
             session()->forget('cart');
 
+            // Vérifier que la route existe
+            \Log::info('Vérification de la route checkout.confirmation');
+            if (!route('checkout.confirmation', ['order' => $order->id], false)) {
+                throw new \Exception('La route checkout.confirmation n\'existe pas');
+            }
+
             // Redirection vers la page de confirmation
+            \Log::info("Redirection vers checkout.confirmation avec order_id={$order->id}");
+            \Log::info('=== FIN SUBMITORDER (SUCCÈS) ===');
+
             return redirect()->route('checkout.confirmation', $order)->with('success', 'Commande créée avec succès !');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            \Log::error('=== ERREUR DE VALIDATION ===');
+            \Log::error('Erreurs de validation:', $e->errors());
+            \Log::error($e->getTraceAsString());
+
+            session()->flash('error', 'Erreur de validation: ' . json_encode($e->errors()));
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            \Log::error('=== ERREUR DE BASE DE DONNÉES ===');
+            \Log::error('Message: ' . $e->getMessage());
+            \Log::error('SQL: ' . $e->getSql());
+            \Log::error('Bindings: ' . json_encode($e->getBindings()));
+            \Log::error($e->getTraceAsString());
+
+            session()->flash('error', 'Erreur de base de données: ' . $e->getMessage());
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Erreur lors de la création de commande: ' . $e->getMessage());
+            \Log::error('=== ERREUR GÉNÉRALE ===');
+            \Log::error('Type: ' . get_class($e));
+            \Log::error('Message: ' . $e->getMessage());
+            \Log::error('Fichier: ' . $e->getFile() . ' (ligne ' . $e->getLine() . ')');
+            \Log::error('Stack trace:');
             \Log::error($e->getTraceAsString());
 
             session()->flash('error', 'Une erreur est survenue lors de la création de la commande: ' . $e->getMessage());
