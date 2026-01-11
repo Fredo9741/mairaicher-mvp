@@ -247,11 +247,11 @@
                     class="mb-4"
                 >
                     {{-- Carte --}}
-                    <div x-show="!showListView">
+                    <div x-show="!showListView" class="relative z-0">
                         <div wire:ignore>
                             <div
                                 x-ref="mapContainer"
-                                class="w-full rounded-lg border-2 border-gray-300"
+                                class="w-full rounded-lg border-2 border-gray-300 relative z-0"
                                 style="height: 400px;"
                             ></div>
                         </div>
