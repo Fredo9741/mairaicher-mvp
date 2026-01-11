@@ -34,13 +34,10 @@
 
 ## Implémentation
 
-### Variable renommée
+### Variable de contrôle
 ```javascript
-// Avant
-showListView: false  // Carte par défaut
-
-// Après
-showMapView: false   // Liste par défaut
+// Liste affichée par défaut, carte en option
+showListView: true   // Liste par défaut
 ```
 
 ### Initialisation lazy de la carte
@@ -64,7 +61,7 @@ init() {
 ### Bouton d'affichage de la carte
 
 ```html
-<button @click="showMapView = true; $nextTick(() => {
+<button @click="showListView = false; $nextTick(() => {
     if (!map) initMap();
     if(selectedMarkerId) selectMarker(selectedMarkerId);
 })">
@@ -73,10 +70,12 @@ init() {
 ```
 
 **Logique** :
-1. Bascule vers la vue carte
-2. `$nextTick` attend que le DOM soit prêt
-3. Initialise la carte si pas encore créée
+1. Masque la liste et affiche la carte
+2. `$nextTick` attend que le DOM soit rendu
+3. **Initialise la carte UNIQUEMENT si elle n'existe pas encore** (lazy loading)
 4. Synchronise le marqueur si un point est déjà sélectionné
+
+**Résultat** : La carte Leaflet et ses tuiles ne se chargent que si l'utilisateur clique sur le bouton !
 
 ## Flux utilisateur
 

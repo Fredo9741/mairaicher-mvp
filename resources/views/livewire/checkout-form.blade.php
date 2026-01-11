@@ -96,12 +96,11 @@
                         markers: {},
                         selectedMarkerId: $wire.entangle('selectedPickupSlotId').live,
                         pickupPoints: {{ Js::from($pickupPoints) }},
-                        showListView: false,
+                        showListView: true, // Liste affichée par défaut (économie de bande passante)
 
                         init() {
-                            this.$nextTick(() => {
-                                this.initMap();
-                            });
+                            // La carte ne se charge PAS automatiquement
+                            // Elle sera initialisée uniquement si l'utilisateur clique sur "Voir la carte"
 
                             // Watch pour appeler la méthode Livewire quand on change de point
                             this.$watch('selectedMarkerId', (value) => {
@@ -263,16 +262,24 @@
                             <button
                                 type="button"
                                 @click="showListView = true"
-                                class="text-sm text-blue-600 hover:text-blue-800 underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
-                                aria-label="Afficher la liste des points de retrait"
+                                class="inline-flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-1 rounded transition focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                aria-label="Retour à la liste des points de retrait"
                             >
-                                Afficher la liste
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                                📋 Retour à la liste
                             </button>
                         </div>
                     </div>
 
-                    {{-- Vue liste alternative (accessibilité) --}}
-                    <div x-show="showListView" style="display: none;">
+                    {{-- Vue liste (affichée par défaut) --}}
+                    <div x-show="showListView">
+                        <div class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p class="text-sm text-blue-800">
+                                💡 <strong>Astuce :</strong> Sélectionnez directement un point ci-dessous, ou cliquez sur "Voir sur la carte" pour une vue géographique.
+                            </p>
+                        </div>
                         <div class="space-y-3 max-h-96 overflow-y-auto border border-gray-300 rounded-lg p-4">
                             <template x-for="point in pickupPoints" :key="point.id">
                                 <div
@@ -295,14 +302,18 @@
                         <div class="mt-2 flex justify-between items-center">
                             <button
                                 type="button"
-                                @click="showListView = false; if(selectedMarkerId) { selectMarker(selectedMarkerId) }"
-                                class="text-sm text-blue-600 hover:text-blue-800 underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
-                                aria-label="Afficher la carte"
+                                @click="showListView = false; $nextTick(() => { if (!map) initMap(); if(selectedMarkerId) selectMarker(selectedMarkerId); })"
+                                class="inline-flex items-center gap-2 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                aria-label="Afficher la carte interactive"
                             >
-                                Afficher la carte
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                📍 Voir sur la carte
                             </button>
-                            <p class="text-xs text-gray-500" x-show="selectedMarkerId">
-                                Point sélectionné
+                            <p class="text-xs text-green-600 font-medium" x-show="selectedMarkerId">
+                                ✓ Point sélectionné
                             </p>
                         </div>
                     </div>
