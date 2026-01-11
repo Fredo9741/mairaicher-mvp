@@ -358,34 +358,39 @@
                             x-data="{
                                 flatpickrInstance: null,
                                 availableDays: @entangle('availableDays').live,
+
                                 init() {
-                                    this.initFlatpickr();
-                                    // Réinitialise Flatpickr quand les jours disponibles changent
+                                    // On attend que Livewire soit totalement prêt
+                                    this.$nextTick(() => {
+                                        this.initFlatpickr();
+                                    });
+
+                                    // On surveille les changements de jours disponibles
                                     this.$watch('availableDays', () => {
                                         this.initFlatpickr();
                                     });
                                 },
+
                                 initFlatpickr() {
                                     if (this.flatpickrInstance) {
                                         this.flatpickrInstance.destroy();
                                     }
 
-                                    // Protection : vérifie que availableDays est bien un tableau
+                                    // Sécurité : on s'assure que availableDays est un tableau utilisable
                                     const days = Array.isArray(this.availableDays) ? this.availableDays : [];
 
                                     this.flatpickrInstance = flatpickr(this.$refs.dateInput, {
-                                        locale: flatpickrFrench,
+                                        locale: typeof flatpickrFrench !== 'undefined' ? flatpickrFrench : 'fr',
                                         dateFormat: 'Y-m-d',
                                         minDate: 'today',
-                                        defaultDate: '{{ $pickupDate }}',
+                                        defaultDate: this.$wire.pickupDate,
                                         enable: days.length > 0 ? [
-                                            function(date) {
-                                                // Active uniquement les jours de la semaine disponibles
+                                            (date) => {
                                                 return days.includes(date.getDay());
                                             }
                                         ] : undefined,
                                         onChange: (selectedDates, dateStr) => {
-                                            @this.set('pickupDate', dateStr);
+                                            this.$wire.set('pickupDate', dateStr);
                                         }
                                     });
                                 }
@@ -395,13 +400,16 @@
                                 type="text"
                                 x-ref="dateInput"
                                 id="pickupDate"
-                                wire:model="pickupDate"
                                 placeholder="Sélectionnez une date"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 @error('pickupDate') border-red-500 @enderror"
                                 readonly
                             >
                         </div>
-                        @if($selectedPickupSlotId && !empty($availableDays))
+                        @if($selectedPickupSlotId && empty($availableDays))
+                            <p class="mt-1 text-xs text-orange-600">
+                                ⚠️ Ce point de retrait n'a pas de jours d'ouverture définis.
+                            </p>
+                        @elseif($selectedPickupSlotId && !empty($availableDays))
                             <p class="mt-1 text-xs text-gray-600">
                                 💡 Seuls les jours d'ouverture du point sont sélectionnables
                             </p>
@@ -435,11 +443,7 @@
                             </select>
                         @else
                             <div class="w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-md text-sm text-gray-500">
-                                @if($selectedPickupSlotId && $pickupDate)
-                                    Aucun créneau disponible pour cette date
-                                @else
-                                    Sélectionnez un point de retrait et une date
-                                @endif
+                                {{ ($selectedPickupSlotId && $pickupDate) ? 'Aucun créneau disponible pour cette date' : 'Sélectionnez un point de retrait et une date' }}
                             </div>
                         @endif
                         @error('selectedTimeSlot')
