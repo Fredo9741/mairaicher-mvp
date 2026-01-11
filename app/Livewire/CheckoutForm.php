@@ -157,6 +157,49 @@ class CheckoutForm extends Component
     }
 
     /**
+     * Retourne les jours de la semaine où le point est ouvert
+     * Utilisé par Flatpickr pour désactiver les jours fermés
+     */
+    public function getAvailableDaysProperty()
+    {
+        if (!$this->selectedPickupSlotId) {
+            return []; // Tous les jours sont sélectionnables si pas de point choisi
+        }
+
+        $pickupSlot = PickupSlot::find($this->selectedPickupSlotId);
+
+        if (!$pickupSlot || empty($pickupSlot->working_hours)) {
+            return [];
+        }
+
+        // Récupère les jours où le point est ouvert (pas fermé)
+        $openDays = collect($pickupSlot->working_hours)
+            ->filter(function ($schedule) {
+                return !isset($schedule['closed']) || !$schedule['closed'];
+            })
+            ->pluck('day')
+            ->unique()
+            ->map(function ($day) {
+                // Convertit en numéro de jour (0 = dimanche, 1 = lundi, ..., 6 = samedi)
+                return match($day) {
+                    'sunday' => 0,
+                    'monday' => 1,
+                    'tuesday' => 2,
+                    'wednesday' => 3,
+                    'thursday' => 4,
+                    'friday' => 5,
+                    'saturday' => 6,
+                    default => null
+                };
+            })
+            ->filter()
+            ->values()
+            ->toArray();
+
+        return $openDays;
+    }
+
+    /**
      * Formate les horaires pour l'affichage dans la popup
      */
     private function formatWorkingHours(array $hours): string

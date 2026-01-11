@@ -354,12 +354,54 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="pickupDate" class="block text-sm font-medium text-gray-700 mb-1">Date de retrait *</label>
-                        <input
-                            type="date"
-                            id="pickupDate"
-                            wire:model.live="pickupDate"
-                            min="{{ now()->format('Y-m-d') }}"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 @error('pickupDate') border-red-500 @enderror">
+                        <div
+                            x-data="{
+                                flatpickrInstance: null,
+                                availableDays: @entangle('availableDays').live,
+                                init() {
+                                    this.initFlatpickr();
+                                    // Réinitialise Flatpickr quand les jours disponibles changent
+                                    this.$watch('availableDays', () => {
+                                        this.initFlatpickr();
+                                    });
+                                },
+                                initFlatpickr() {
+                                    if (this.flatpickrInstance) {
+                                        this.flatpickrInstance.destroy();
+                                    }
+                                    this.flatpickrInstance = flatpickr(this.$refs.dateInput, {
+                                        locale: flatpickrFrench,
+                                        dateFormat: 'Y-m-d',
+                                        minDate: 'today',
+                                        defaultDate: '{{ $pickupDate }}',
+                                        enable: this.availableDays.length > 0 ? [
+                                            function(date) {
+                                                // Active uniquement les jours de la semaine disponibles
+                                                return this.availableDays.includes(date.getDay());
+                                            }.bind(this)
+                                        ] : undefined,
+                                        onChange: (selectedDates, dateStr) => {
+                                            @this.set('pickupDate', dateStr);
+                                        }
+                                    });
+                                }
+                            }"
+                        >
+                            <input
+                                type="text"
+                                x-ref="dateInput"
+                                id="pickupDate"
+                                wire:model="pickupDate"
+                                placeholder="Sélectionnez une date"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 @error('pickupDate') border-red-500 @enderror"
+                                readonly
+                            >
+                        </div>
+                        @if($selectedPickupSlotId && !empty($this->availableDays))
+                            <p class="mt-1 text-xs text-gray-600">
+                                💡 Seuls les jours d'ouverture du point sont sélectionnables
+                            </p>
+                        @endif
                         @error('pickupDate')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
