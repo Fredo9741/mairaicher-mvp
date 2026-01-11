@@ -99,8 +99,8 @@
                         showListView: true, // Liste affichée par défaut (économie de bande passante)
 
                         init() {
-                            // La carte ne se charge PAS automatiquement
-                            // Elle sera initialisée uniquement si l'utilisateur clique sur "Voir la carte"
+                            // La carte ne se charge PAS automatiquement au chargement de la page
+                            // Elle sera initialisée uniquement si besoin (lazy loading)
 
                             // Watch pour appeler la méthode Livewire quand on change de point
                             this.$watch('selectedMarkerId', (value) => {
