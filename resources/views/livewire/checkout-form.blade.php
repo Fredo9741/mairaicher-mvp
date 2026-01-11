@@ -369,16 +369,20 @@
                                     if (this.flatpickrInstance) {
                                         this.flatpickrInstance.destroy();
                                     }
+
+                                    // Protection : vérifie que availableDays est bien un tableau
+                                    const days = Array.isArray(this.availableDays) ? this.availableDays : [];
+
                                     this.flatpickrInstance = flatpickr(this.$refs.dateInput, {
                                         locale: flatpickrFrench,
                                         dateFormat: 'Y-m-d',
                                         minDate: 'today',
                                         defaultDate: '{{ $pickupDate }}',
-                                        enable: this.availableDays.length > 0 ? [
+                                        enable: days.length > 0 ? [
                                             function(date) {
                                                 // Active uniquement les jours de la semaine disponibles
-                                                return this.availableDays.includes(date.getDay());
-                                            }.bind(this)
+                                                return days.includes(date.getDay());
+                                            }
                                         ] : undefined,
                                         onChange: (selectedDates, dateStr) => {
                                             @this.set('pickupDate', dateStr);
@@ -397,7 +401,7 @@
                                 readonly
                             >
                         </div>
-                        @if($selectedPickupSlotId && !empty($this->availableDays))
+                        @if($selectedPickupSlotId && !empty($availableDays))
                             <p class="mt-1 text-xs text-gray-600">
                                 💡 Seuls les jours d'ouverture du point sont sélectionnables
                             </p>

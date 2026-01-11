@@ -23,6 +23,7 @@ class CheckoutForm extends Component
     public $pickupDate;
     public $selectedTimeSlot;
     public $availableTimeSlots = [];
+    public $availableDays = []; // Jours de la semaine disponibles pour Flatpickr
 
     // Panier
     public $cart = [];
@@ -89,6 +90,7 @@ class CheckoutForm extends Component
     public function selectPickupPoint($pickupSlotId)
     {
         $this->selectedPickupSlotId = $pickupSlotId;
+        $this->updateAvailableDays(); // Met à jour les jours disponibles pour Flatpickr
         $this->updateAvailableTimeSlots();
     }
 
@@ -157,23 +159,24 @@ class CheckoutForm extends Component
     }
 
     /**
-     * Retourne les jours de la semaine où le point est ouvert
-     * Utilisé par Flatpickr pour désactiver les jours fermés
+     * Met à jour les jours de la semaine disponibles pour Flatpickr
      */
-    public function getAvailableDaysProperty()
+    public function updateAvailableDays()
     {
+        $this->availableDays = [];
+
         if (!$this->selectedPickupSlotId) {
-            return []; // Tous les jours sont sélectionnables si pas de point choisi
+            return; // Tous les jours sont sélectionnables si pas de point choisi
         }
 
         $pickupSlot = PickupSlot::find($this->selectedPickupSlotId);
 
         if (!$pickupSlot || empty($pickupSlot->working_hours)) {
-            return [];
+            return;
         }
 
         // Récupère les jours où le point est ouvert (pas fermé)
-        $openDays = collect($pickupSlot->working_hours)
+        $this->availableDays = collect($pickupSlot->working_hours)
             ->filter(function ($schedule) {
                 return !isset($schedule['closed']) || !$schedule['closed'];
             })
@@ -195,8 +198,6 @@ class CheckoutForm extends Component
             ->filter()
             ->values()
             ->toArray();
-
-        return $openDays;
     }
 
     /**
