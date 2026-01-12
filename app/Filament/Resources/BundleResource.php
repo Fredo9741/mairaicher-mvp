@@ -67,32 +67,21 @@ class BundleResource extends Resource
 
                 Forms\Components\Section::make('Composition du panier')
                     ->schema([
-                        Forms\Components\Repeater::make('products')
-                            ->label('Produits inclus')
-                            ->relationship('products')
-                            ->schema([
-                                Forms\Components\Select::make('id')
-                                    ->label('Produit')
-                                    ->options(Product::where('is_active', true)->pluck('name', 'id'))
-                                    ->required()
-                                    ->searchable()
-                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                        Forms\Components\Textarea::make('composition_indicative')
+                            ->label('Composition indicative du panier')
+                            ->placeholder('Ex: 5kg de légumes de saison (tomates, salades, courgettes...)')
+                            ->rows(4)
+                            ->helperText('Décrivez simplement le contenu du panier pour vos clients')
+                            ->columnSpanFull(),
 
-                                Forms\Components\TextInput::make('quantity_included')
-                                    ->label('Quantité')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(1)
-                                    ->minValue(0.01)
-                                    ->step(0.01)
-                                    ->suffix('unité'),
-                            ])
-                            ->columns(2)
-                            ->defaultItems(0)
-                            ->addActionLabel('Ajouter un produit')
-                            ->columnSpanFull()
-                            ->grid(1),
-                    ]),
+                        Forms\Components\TextInput::make('quantity')
+                            ->label('Quantité disponible')
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0)
+                            ->helperText('Nombre de paniers en stock')
+                            ->required(),
+                    ])->columns(1),
 
                 Forms\Components\Section::make('Image')
                     ->schema([
@@ -129,10 +118,11 @@ class BundleResource extends Resource
                     ->formatStateUsing(fn ($state) => number_format($state / 100, 2, ',', ' ') . ' €')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('products_count')
-                    ->label('Nb produits')
-                    ->counts('products')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('quantity')
+                    ->label('Stock')
+                    ->sortable()
+                    ->badge()
+                    ->color(fn ($state) => $state > 10 ? 'success' : ($state > 5 ? 'warning' : ($state > 0 ? 'danger' : 'gray'))),
 
                 Tables\Columns\ToggleColumn::make('is_active')
                     ->label('Actif'),

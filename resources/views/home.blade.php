@@ -114,7 +114,7 @@
 
     <!-- Paniers de saison -->
     @if($bundles->count() > 0)
-    <section id="paniers" class="mb-20" x-data="{ selectedBundle: null }">
+    <section id="paniers" class="mb-20">
         <div class="text-center mb-12">
             <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
                 <span>⭐</span>
@@ -126,7 +126,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($bundles as $bundle)
-            <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200 hover:-translate-y-1">
+            <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200 hover:-translate-y-1 flex flex-col h-full">
                 @if($bundle->image)
                 <!-- Image du panier -->
                 <div class="relative h-56 overflow-hidden bg-gray-50">
@@ -144,36 +144,27 @@
                     </div>
 
                     <!-- Badge de stock -->
-                    @php
-                        $minAvailable = PHP_INT_MAX;
-                        foreach($bundle->products as $product) {
-                            $maxBundles = floor($product->stock / $product->pivot->quantity_included);
-                            if ($maxBundles < $minAvailable) {
-                                $minAvailable = $maxBundles;
-                            }
-                        }
-                    @endphp
                     <div class="absolute top-3 right-3">
-                        @if($minAvailable > 10)
+                        @if($bundle->quantity > 10)
                             <span class="inline-flex items-center gap-1.5 bg-emerald-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm">
                                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
                                 </svg>
                                 En stock
                             </span>
-                        @elseif($minAvailable > 5)
+                        @elseif($bundle->quantity > 5)
                             <span class="inline-flex items-center gap-1.5 bg-orange-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm">
                                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
                                 </svg>
-                                {{ $minAvailable }} restants
+                                {{ $bundle->quantity }} restants
                             </span>
-                        @elseif($minAvailable > 0)
+                        @elseif($bundle->quantity > 0)
                             <span class="inline-flex items-center gap-1.5 bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg animate-pulse backdrop-blur-sm">
                                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
                                 </svg>
-                                {{ $minAvailable }} restants !
+                                {{ $bundle->quantity }} restants !
                             </span>
                         @else
                             <span class="inline-flex items-center gap-1.5 bg-gray-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm">
@@ -211,10 +202,18 @@
                 </div>
                 @endif
 
-                <div class="p-6 pt-2">
-                    <p class="text-gray-600 mb-6 min-h-[3rem] leading-relaxed">{{ $bundle->description }}</p>
+                <div class="p-6 pt-2 flex flex-col flex-grow">
+                    <p class="text-gray-600 mb-4 flex-grow leading-relaxed">{{ $bundle->description }}</p>
 
-                    <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 mb-6 border-2 border-emerald-100">
+                    @if($bundle->composition_indicative)
+                    <div class="bg-emerald-50 rounded-xl p-4 mb-4 border border-emerald-100">
+                        <p class="text-sm text-emerald-800 leading-relaxed">
+                            <span class="font-semibold">Composition : </span>{{ $bundle->composition_indicative }}
+                        </p>
+                    </div>
+                    @endif
+
+                    <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 mb-4 border-2 border-emerald-100">
                         <div class="flex items-baseline justify-between">
                             <div>
                                 <div class="text-3xl font-bold text-emerald-700">
@@ -230,7 +229,7 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('cart.add.bundle', $bundle) }}" method="POST" class="space-y-4" data-cart-form>
+                    <form action="{{ route('cart.add.bundle', $bundle) }}" method="POST" class="space-y-4 mt-auto" data-cart-form>
                         @csrf
                         <div class="flex items-center gap-3 bg-gray-50 rounded-xl p-4">
                             <label class="text-sm font-semibold text-gray-700 flex-shrink-0">Quantité</label>
@@ -245,134 +244,55 @@
                             <span>Ajouter au panier</span>
                         </button>
                     </form>
-
-                    <button @click="selectedBundle = {{ $bundle->id }}"
-                        class="block w-full mt-4 text-center text-emerald-600 hover:text-emerald-700 font-semibold hover:underline transition-colors">
-                        Voir le détail du panier →
-                    </button>
                 </div>
             </div>
             @endforeach
         </div>
+    </section>
+    @endif
 
-        <!-- Modale de détail du panier -->
-        @foreach($bundles as $bundle)
-        <div x-show="selectedBundle === {{ $bundle->id }}"
-             @click.away="selectedBundle = null"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 z-50 overflow-y-auto"
-             style="display: none;">
+    <!-- Bannière Catalogue Personnalisé -->
+    <section class="mb-20">
+        <div class="relative bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 rounded-3xl p-10 md:p-12 overflow-hidden border-2 border-emerald-200 shadow-lg">
+            <!-- Motif décoratif -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-200/30 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-green-200/30 rounded-full blur-3xl"></div>
 
-            <!-- Overlay -->
-            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
-
-            <!-- Contenu de la modale -->
-            <div class="relative min-h-screen flex items-center justify-center p-4">
-                <div @click.stop
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0 transform scale-95"
-                     x-transition:enter-end="opacity-100 transform scale-100"
-                     x-transition:leave="transition ease-in duration-200"
-                     x-transition:leave-start="opacity-100 transform scale-100"
-                     x-transition:leave-end="opacity-0 transform scale-95"
-                     class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden">
-
-                    <!-- Header -->
-                    <div class="bg-gradient-to-r from-emerald-600 to-green-600 p-6 text-white">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <h3 class="text-2xl font-bold mb-2">{{ $bundle->name }}</h3>
-                                <p class="text-emerald-50">{{ $bundle->description }}</p>
-                            </div>
-                            <button @click="selectedBundle = null"
-                                    class="text-white hover:text-gray-200 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            </button>
-                        </div>
+            <div class="relative flex flex-col md:flex-row items-center justify-between gap-8">
+                <!-- Icône et texte -->
+                <div class="flex items-center gap-6 flex-1">
+                    <div class="w-20 h-20 bg-gradient-to-br from-emerald-600 to-green-600 rounded-2xl flex items-center justify-center shadow-xl flex-shrink-0">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                        </svg>
                     </div>
-
-                    <!-- Contenu -->
-                    <div class="p-6">
-                        <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"/>
-                            </svg>
-                            Contenu du panier
-                        </h4>
-
-                        <div class="space-y-3">
-                            @foreach($bundle->products as $product)
-                            <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <span class="text-2xl">
-                                        @if($product->category === 'legume')
-                                            🥬
-                                        @elseif($product->category === 'fruit')
-                                            🍎
-                                        @elseif($product->category === 'volaille')
-                                            🐓
-                                        @else
-                                            🛒
-                                        @endif
-                                    </span>
-                                </div>
-                                <div class="flex-1">
-                                    <h5 class="font-semibold text-gray-800">{{ $product->name }}</h5>
-                                    <p class="text-sm text-gray-600">{{ $product->pivot->quantity_included }} {{ $product->unit === 'kg' ? 'kg' : 'pièce(s)' }}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-sm font-medium text-emerald-600">
-                                        {{ number_format(($product->price_cents * $product->pivot->quantity_included) / 100, 2, ',', ' ') }} €
-                                    </p>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-
-                        <!-- Prix total -->
-                        <div class="mt-6 pt-6 border-t border-gray-200">
-                            <div class="flex items-center justify-between">
-                                <span class="text-lg font-bold text-gray-800">Prix du panier</span>
-                                <span class="text-3xl font-bold text-emerald-600">
-                                    {{ number_format($bundle->price_cents / 100, 2, ',', ' ') }} €
-                                </span>
-                            </div>
-                            <p class="text-sm text-gray-500 mt-2">
-                                Économie par rapport à l'achat séparé :
-                                @php
-                                    $totalSeparate = $bundle->products->sum(fn($p) => $p->price_cents * $p->pivot->quantity_included);
-                                    $savings = $totalSeparate - $bundle->price_cents;
-                                @endphp
-                                <span class="font-semibold text-emerald-600">{{ number_format($savings / 100, 2, ',', ' ') }} €</span>
-                            </p>
-                        </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                            Pas fan des surprises ?
+                        </h3>
+                        <p class="text-lg text-gray-600">
+                            Composez votre panier sur mesure parmi tous nos produits frais.
+                        </p>
                     </div>
+                </div>
 
-                    <!-- Footer -->
-                    <div class="bg-gray-50 px-6 py-4 flex gap-3">
-                        <button @click="selectedBundle = null"
-                                class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-100 transition-all">
-                            Fermer
-                        </button>
-                        <button @click="selectedBundle = null; document.querySelector('[data-cart-form][action*=\'bundles/{{ $bundle->id }}\'] button[type=submit]').click()"
-                                class="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-green-700 transition-all shadow-md hover:shadow-lg">
-                            Ajouter au panier
-                        </button>
-                    </div>
+                <!-- Bouton CTA -->
+                <div class="flex-shrink-0">
+                    <a href="#produits"
+                       onclick="event.preventDefault(); document.querySelector('#produits').scrollIntoView({ behavior: 'smooth', block: 'start' });"
+                       class="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white px-8 py-5 rounded-2xl font-bold text-lg hover:from-emerald-700 hover:to-green-700 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 transform group">
+                        <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        <span>Mon Marché à la Carte</span>
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </div>
-        @endforeach
     </section>
-    @endif
 
     <!-- Produits par catégorie -->
     @php
