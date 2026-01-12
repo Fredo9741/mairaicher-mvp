@@ -71,7 +71,7 @@ class BundleResource extends Resource
                             ->label('Produits inclus')
                             ->relationship('products')
                             ->schema([
-                                Forms\Components\Select::make('product_id')
+                                Forms\Components\Select::make('id')
                                     ->label('Produit')
                                     ->options(Product::where('is_active', true)->pluck('name', 'id'))
                                     ->required()
