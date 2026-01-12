@@ -275,11 +275,11 @@ class CheckoutForm extends Component
                 }
 
                 if ($item['type'] === 'bundle') {
-                    $bundle = Bundle::with('products')->find($item['id']);
+                    $bundle = Bundle::find($item['id']);
                     if (!$bundle) {
                         throw new \Exception("Le panier '{$item['name']}' n'existe plus.");
                     }
-                    \Log::info("Panier trouvé: {$bundle->name}");
+                    \Log::info("Panier trouvé: {$bundle->name}, stock disponible: {$bundle->quantity}");
 
                     if (!$bundle->isAvailable($item['quantity'])) {
                         throw new \Exception($bundle->getStockErrorMessage($item['quantity']));
@@ -332,14 +332,10 @@ class CheckoutForm extends Component
 
                 // Réserver le stock pour les paniers
                 if ($item['type'] === 'bundle') {
-                    $bundle = Bundle::with('products')->find($item['id']);
+                    $bundle = Bundle::find($item['id']);
                     if ($bundle) {
-                        \Log::info("Décrémentation du stock pour le panier: {$bundle->name}");
-                        foreach ($bundle->products as $product) {
-                            $quantityNeeded = $product->pivot->quantity_included * $item['quantity'];
-                            \Log::info("  - Produit: {$product->name}, quantité: {$quantityNeeded}");
-                            $product->decrementStock($quantityNeeded);
-                        }
+                        \Log::info("Décrémentation du stock pour le panier: {$bundle->name}, quantité: {$item['quantity']}");
+                        $bundle->decrement('quantity', $item['quantity']);
                     }
                 }
             }

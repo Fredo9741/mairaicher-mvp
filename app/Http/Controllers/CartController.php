@@ -81,9 +81,6 @@ class CartController extends Controller
         $currentQuantity = isset($cart[$itemKey]) ? $cart[$itemKey]['quantity'] : 0;
         $totalQuantity = $currentQuantity + $quantity;
 
-        // Charger les produits avec leurs relations pour la vérification de stock
-        $bundle->load('products');
-
         // Vérifier le stock avec la quantité totale de bundles
         if (!$bundle->isAvailable($totalQuantity)) {
             $errorMessage = $bundle->getStockErrorMessage($totalQuantity);
@@ -149,7 +146,7 @@ class CartController extends Controller
 
                 // Vérifier le stock pour les bundles
                 if ($cart[$itemKey]['type'] === 'bundle') {
-                    $bundle = Bundle::with('products')->find($cart[$itemKey]['id']);
+                    $bundle = Bundle::find($cart[$itemKey]['id']);
 
                     if ($bundle && !$bundle->isAvailable((int) $newQuantity)) {
                         return back()->with('error', $bundle->getStockErrorMessage((int) $newQuantity));
