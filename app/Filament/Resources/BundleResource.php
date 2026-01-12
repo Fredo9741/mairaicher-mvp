@@ -48,11 +48,17 @@ class BundleResource extends Resource
                             ->columnSpanFull(),
 
                         Forms\Components\TextInput::make('price_cents')
-                            ->label('Prix (en centimes)')
+                            ->label('Prix de vente')
                             ->required()
                             ->numeric()
-                            ->suffix('centimes')
-                            ->helperText('Ex: 1500 pour 15.00€'),
+                            ->step(0.01)
+                            ->suffix('€')
+                            ->placeholder('0.00')
+                            ->helperText('Entrez le prix en euros (ex: 15.00)')
+                            // Divise par 100 pour afficher en euros
+                            ->formatStateUsing(fn ($state): ?string => $state ? number_format($state / 100, 2, '.', '') : null)
+                            // Multiplie par 100 et arrondit avant d'enregistrer
+                            ->dehydrateStateUsing(fn ($state) => $state ? (int) round($state * 100) : 0),
 
                         Forms\Components\Toggle::make('is_active')
                             ->label('Panier actif')

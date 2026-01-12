@@ -64,11 +64,17 @@ class ProductResource extends Resource
                 Forms\Components\Section::make('Prix et stock')
                     ->schema([
                         Forms\Components\TextInput::make('price_cents')
-                            ->label('Prix (en centimes)')
+                            ->label('Prix de vente')
                             ->required()
                             ->numeric()
-                            ->suffix('centimes')
-                            ->helperText('Ex: 250 pour 2.50€'),
+                            ->step(0.01)
+                            ->suffix('€')
+                            ->placeholder('0.00')
+                            ->helperText('Entrez le prix en euros (ex: 2.50)')
+                            // Divise par 100 pour afficher en euros
+                            ->formatStateUsing(fn ($state): ?string => $state ? number_format($state / 100, 2, '.', '') : null)
+                            // Multiplie par 100 et arrondit avant d'enregistrer
+                            ->dehydrateStateUsing(fn ($state) => $state ? (int) round($state * 100) : 0),
 
                         Forms\Components\Select::make('unit')
                             ->label('Unité')
