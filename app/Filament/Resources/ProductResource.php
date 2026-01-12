@@ -48,11 +48,12 @@ class ProductResource extends Resource
                             ->label('Catégorie')
                             ->options([
                                 'legume' => 'Légume',
+                                'fruit' => 'Fruit',
                                 'volaille' => 'Volaille',
-                                'autre' => 'Autre',
+                                'epicerie' => 'Épicerie',
                             ])
                             ->required()
-                            ->default('autre'),
+                            ->default('epicerie'),
 
                         Forms\Components\Textarea::make('description')
                             ->label('Description')
@@ -125,13 +126,15 @@ class ProductResource extends Resource
                     ->label('Catégorie')
                     ->colors([
                         'success' => 'legume',
+                        'danger' => 'fruit',
                         'warning' => 'volaille',
-                        'secondary' => 'autre',
+                        'info' => 'epicerie',
                     ])
                     ->formatStateUsing(fn ($state) => match($state) {
                         'legume' => 'Légume',
+                        'fruit' => 'Fruit',
                         'volaille' => 'Volaille',
-                        'autre' => 'Autre',
+                        'epicerie' => 'Épicerie',
                         default => $state,
                     }),
 
@@ -163,8 +166,9 @@ class ProductResource extends Resource
                     ->label('Catégorie')
                     ->options([
                         'legume' => 'Légume',
+                        'fruit' => 'Fruit',
                         'volaille' => 'Volaille',
-                        'autre' => 'Autre',
+                        'epicerie' => 'Épicerie',
                     ]),
 
                 Tables\Filters\TernaryFilter::make('is_active')

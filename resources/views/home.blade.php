@@ -315,10 +315,12 @@
                                     <span class="text-2xl">
                                         @if($product->category === 'legume')
                                             🥬
+                                        @elseif($product->category === 'fruit')
+                                            🍎
                                         @elseif($product->category === 'volaille')
                                             🐓
                                         @else
-                                            🥚
+                                            🛒
                                         @endif
                                     </span>
                                 </div>
@@ -383,6 +385,14 @@
                 'bgColor' => 'from-green-50 to-emerald-50',
                 'borderColor' => 'border-green-200'
             ],
+            'fruit' => [
+                'label' => 'Fruits Frais',
+                'description' => 'Des fruits tropicaux savoureux et gorgés de soleil',
+                'icon' => '<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/>',
+                'gradient' => 'from-red-600 to-pink-600',
+                'bgColor' => 'from-red-50 to-pink-50',
+                'borderColor' => 'border-red-200'
+            ],
             'volaille' => [
                 'label' => 'Volaille Fermière',
                 'description' => 'Élevage en plein air, qualité premium',
@@ -391,10 +401,10 @@
                 'bgColor' => 'from-orange-50 to-amber-50',
                 'borderColor' => 'border-orange-200'
             ],
-            'autre' => [
-                'label' => 'Autres Produits',
-                'description' => 'Découvrez nos spécialités du terroir',
-                'icon' => '<path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>',
+            'epicerie' => [
+                'label' => 'Épicerie',
+                'description' => 'Découvrez nos spécialités et produits du terroir',
+                'icon' => '<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>',
                 'gradient' => 'from-amber-600 to-yellow-600',
                 'bgColor' => 'from-amber-50 to-yellow-50',
                 'borderColor' => 'border-amber-200'
@@ -481,7 +491,15 @@
                     @else
                     <div class="relative h-56 bg-gradient-to-br {{ $categoryData['bgColor'] }} flex items-center justify-center">
                         <span class="text-7xl filter drop-shadow-lg">
-                            {{ $product->category === 'legume' ? '🥬' : ($product->category === 'volaille' ? '🐓' : '🌾') }}
+                            @if($product->category === 'legume')
+                                🥬
+                            @elseif($product->category === 'fruit')
+                                🍎
+                            @elseif($product->category === 'volaille')
+                                🐓
+                            @else
+                                🛒
+                            @endif
                         </span>
 
                         <!-- Badge stock (en haut à droite) -->
