@@ -15,6 +15,7 @@ class Order extends Model
         'customer_phone',
         'total_price_cents',
         'pickup_date',
+        'pickup_time_slot',
         'pickup_slot_id',
         'status',
         'stripe_payment_intent_id',

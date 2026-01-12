@@ -296,6 +296,7 @@ class CheckoutForm extends Component
                 'customer_phone' => $this->customer_phone,
                 'total_price_cents' => $this->total,
                 'pickup_date' => $this->pickupDate,
+                'pickup_time_slot' => $this->selectedTimeSlot,
                 'pickup_slot_id' => $this->selectedPickupSlotId,
                 'status' => 'pending',
                 'notes' => $this->notes,

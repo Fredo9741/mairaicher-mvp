@@ -74,4 +74,19 @@ class OrderItem extends Model
     {
         return $this->total_price_cents / 100;
     }
+
+    /**
+     * Get the unit suffix for display (kg or pc)
+     */
+    public function getUnitSuffix(): string
+    {
+        if ($this->item_type === 'product') {
+            $product = $this->product;
+            if ($product && isset($product->unit)) {
+                return $product->unit === 'kg' ? ' kg' : ' pc';
+            }
+        }
+        // Pour les bundles, toujours pc
+        return ' pc';
+    }
 }

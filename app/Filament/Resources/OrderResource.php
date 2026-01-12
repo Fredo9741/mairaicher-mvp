@@ -139,8 +139,20 @@ class OrderResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('pickupSlot.name')
-                    ->label('Créneau')
+                    ->label('Lieu')
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('pickup_time_slot')
+                    ->label('Horaire')
+                    ->formatStateUsing(function ($state) {
+                        if (!$state) return '-';
+                        // Format: 09:00:00-13:00:00 -> 9h-13h
+                        $parts = explode('-', $state);
+                        if (count($parts) !== 2) return $state;
+                        $start = substr($parts[0], 0, 5); // 09:00
+                        $end = substr($parts[1], 0, 5);   // 13:00
+                        return str_replace(':00', 'h', $start) . '-' . str_replace(':00', 'h', $end);
+                    }),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Créée le')
@@ -233,8 +245,19 @@ class OrderResource extends Resource
                             ->label('Date')
                             ->date('d/m/Y'),
                         Infolists\Components\TextEntry::make('pickupSlot.name')
-                            ->label('Créneau'),
-                    ])->columns(2),
+                            ->label('Lieu'),
+                        Infolists\Components\TextEntry::make('pickup_time_slot')
+                            ->label('Horaire')
+                            ->formatStateUsing(function ($state) {
+                                if (!$state) return '-';
+                                // Format: 09:00:00-13:00:00 -> 9h-13h
+                                $parts = explode('-', $state);
+                                if (count($parts) !== 2) return $state;
+                                $start = substr($parts[0], 0, 5); // 09:00
+                                $end = substr($parts[1], 0, 5);   // 13:00
+                                return str_replace(':00', 'h', $start) . '-' . str_replace(':00', 'h', $end);
+                            }),
+                    ])->columns(3),
 
                 Infolists\Components\Section::make('Articles')
                     ->schema([
@@ -245,7 +268,7 @@ class OrderResource extends Resource
                                     ->label('Produit'),
                                 Infolists\Components\TextEntry::make('quantity')
                                     ->label('Quantité')
-                                    ->suffix(fn ($record) => $record->item_type === 'product' && str_contains($record->item_name, 'kg') ? ' kg' : ' pc'),
+                                    ->suffix(fn ($record) => $record->getUnitSuffix()),
                                 Infolists\Components\TextEntry::make('unit_price_cents')
                                     ->label('Prix unitaire')
                                     ->formatStateUsing(fn ($state) => number_format($state / 100, 2, ',', ' ') . ' €'),
