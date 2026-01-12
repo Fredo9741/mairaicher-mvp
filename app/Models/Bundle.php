@@ -97,11 +97,21 @@ class Bundle extends Model
             return 'Ce panier n\'est plus disponible.';
         }
 
+        // Vérifier que le panier a des produits
+        if ($this->products->isEmpty()) {
+            return "Le panier '{$this->name}' ne contient aucun produit.";
+        }
+
         // Trouver le produit le plus limitant
         $mostLimitingProduct = null;
         $minAvailableBundles = PHP_INT_MAX;
 
         foreach ($this->products as $product) {
+            // Vérifier que le produit est actif
+            if (!$product->is_active) {
+                return "Le produit '{$product->name}' du panier '{$this->name}' n'est plus disponible.";
+            }
+
             $quantityNeeded = $product->pivot->quantity_included * $bundleQuantity;
             $availableStock = $product->stock;
             $maxBundles = floor($availableStock / $product->pivot->quantity_included);
@@ -121,6 +131,6 @@ class Bundle extends Model
             return "Stock insuffisant pour {$bundleQuantity} panier(s) '{$this->name}'. Maximum disponible : {$minAvailableBundles} panier(s) (limité par le stock de '{$mostLimitingProduct->name}').";
         }
 
-        return '';
+        return "Le panier '{$this->name}' est disponible.";
     }
 }
