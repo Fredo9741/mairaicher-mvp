@@ -15,6 +15,9 @@ return new class extends Migration
         // Pour SQLite, on doit recréer la table complète avec la nouvelle structure
         // car SQLite ne supporte pas ALTER COLUMN pour les ENUM
 
+        // Étape 0: Nettoyer toute table temporaire existante d'une migration précédente
+        Schema::dropIfExists('products_new');
+
         // Étape 1: Créer une table temporaire avec la nouvelle structure
         Schema::create('products_new', function (Blueprint $table) {
             $table->id();
@@ -53,6 +56,10 @@ return new class extends Migration
     public function down(): void
     {
         // Pour le rollback, on refait la même opération en sens inverse
+
+        // Nettoyer toute table temporaire existante
+        Schema::dropIfExists('products_old');
+
         Schema::create('products_old', function (Blueprint $table) {
             $table->id();
             $table->string('name');
