@@ -19,10 +19,19 @@ class HomeController extends Controller
             ->orderBy('name')
             ->get();
 
+        // Récupérer les paniers actifs avec leurs produits
         $bundles = Bundle::where('is_active', true)
-            ->with('products')
+            ->with(['products' => function ($query) {
+                // S'assurer que les produits existent et sont actifs
+                $query->where('is_active', true);
+            }])
             ->get()
             ->filter(function ($bundle) {
+                // Vérifier que le panier a encore des produits associés
+                if ($bundle->products->isEmpty()) {
+                    return false;
+                }
+                // Vérifier la disponibilité du panier
                 return $bundle->isAvailable();
             });
 

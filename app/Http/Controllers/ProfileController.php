@@ -18,8 +18,15 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         // Récupérer les commandes de l'utilisateur avec les informations liées
+        // Utiliser withDefault() pour gérer les relations supprimées
         $orders = Order::where('customer_email', $user->email)
-            ->with(['items', 'pickupSlot'])
+            ->with([
+                'items',
+                'pickupSlot' => function ($query) {
+                    // Récupérer le slot même s'il a été désactivé
+                    $query->withoutGlobalScopes();
+                }
+            ])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

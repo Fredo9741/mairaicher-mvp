@@ -34,7 +34,7 @@ function checkoutSteps() {
             if (name && name.trim() && email && email.trim() && phone && phone.trim()) {
                 this.stepCompleted[1] = true;
                 this.currentStep = 2;
-                this.scrollToTop();
+                // Pas de scroll - l'utilisateur reste au même niveau
             } else {
                 // Affiche un message si les champs ne sont pas remplis
                 alert('Veuillez remplir tous les champs obligatoires (Nom, Email, Téléphone)');
@@ -53,7 +53,7 @@ function checkoutSteps() {
             if (pickupSlotId && pickupDate && timeSlot) {
                 this.stepCompleted[2] = true;
                 this.currentStep = 3;
-                this.scrollToTop();
+                // Pas de scroll - l'utilisateur reste au même niveau
             } else {
                 // Affiche un message si les champs ne sont pas remplis
                 alert('Veuillez sélectionner un point de retrait, une date et un créneau horaire');
@@ -75,13 +75,6 @@ function checkoutSteps() {
             const pickupDate = this.$wire.get('pickupDate');
             const timeSlot = this.$wire.get('selectedTimeSlot');
             this.stepCompleted[2] = !!(pickupSlotId && pickupDate && timeSlot);
-        },
-
-        /**
-         * Scroll vers le haut de la page
-         */
-        scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 }

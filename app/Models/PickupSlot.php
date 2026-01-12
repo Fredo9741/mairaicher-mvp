@@ -23,6 +23,14 @@ class PickupSlot extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * Générer le time_range pour l'affichage (basé sur le nom du slot)
+     */
+    public function getTimeRangeAttribute(): string
+    {
+        return $this->name ?? 'Créneau non défini';
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);

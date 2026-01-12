@@ -1,4 +1,7 @@
 <div class="min-h-screen bg-gray-50 pb-12">
+    {{-- Indicateur de chargement global --}}
+    <x-page-loading />
+
     {{-- En-tête --}}
     <div class="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-8 mb-8 shadow-lg">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,25 +36,6 @@
                 </div>
             </div>
         @endif
-
-        {{-- Récapitulatif rapide mobile (sticky top) --}}
-        <div class="lg:hidden mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 sticky top-20 z-40 shadow-md">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm text-gray-600">Total de votre commande</p>
-                    <p class="text-2xl font-bold text-green-600">{{ number_format($total / 100, 2, ',', ' ') }} €</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs text-gray-500">{{ count($cart) }} article{{ count($cart) > 1 ? 's' : '' }}</p>
-                    <p class="text-xs text-blue-800 mt-1">
-                        <svg class="inline w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Paiement au retrait
-                    </p>
-                </div>
-            </div>
-        </div>
 
         {{-- Conteneur principal avec Alpine.js --}}
         <div x-data="checkoutSteps()" class="grid grid-cols-1 lg:grid-cols-3 gap-8">

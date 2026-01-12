@@ -44,7 +44,11 @@ class Order extends Model
 
     public function pickupSlot(): BelongsTo
     {
-        return $this->belongsTo(PickupSlot::class);
+        return $this->belongsTo(PickupSlot::class)
+            ->withDefault([
+                'name' => 'Créneau supprimé',
+                'is_active' => false,
+            ]);
     }
 
     public function getTotalPriceAttribute(): float

@@ -95,8 +95,11 @@
             {{-- Vue liste (affichée par défaut) --}}
             <div x-show="showListView">
                 <div class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p class="text-sm text-blue-800">
-                        💡 <strong>Astuce :</strong> Sélectionnez directement un point ci-dessous, ou cliquez sur "Voir sur la carte" pour une vue géographique.
+                    <p class="text-sm text-blue-800 font-semibold">
+                        👉 <strong>Sélectionnez un lieu de rendez-vous :</strong>
+                    </p>
+                    <p class="text-xs text-blue-700 mt-1">
+                        Cliquez sur un point ci-dessous ou utilisez "Voir sur la carte" pour une vue géographique.
                     </p>
                 </div>
                 <div class="space-y-3 max-h-96 overflow-y-auto border border-gray-300 rounded-lg p-4">
@@ -118,7 +121,7 @@
                         </div>
                     </template>
                 </div>
-                <div class="mt-2 flex justify-between items-center">
+                <div class="mt-2">
                     <button
                         type="button"
                         @click="showListView = false; $nextTick(() => { if (!map) initMap(); if(selectedMarkerId) selectMarker(selectedMarkerId); })"
@@ -131,9 +134,6 @@
                         </svg>
                         Voir sur la carte
                     </button>
-                    <p class="text-xs text-green-600 font-medium" x-show="selectedMarkerId">
-                        ✓ Point sélectionné
-                    </p>
                 </div>
             </div>
         </div>

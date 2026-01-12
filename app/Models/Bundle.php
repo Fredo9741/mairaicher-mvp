@@ -71,7 +71,17 @@ class Bundle extends Model
             return false;
         }
 
+        // Vérifier qu'il y a des produits associés
+        if ($this->products->isEmpty()) {
+            return false;
+        }
+
         foreach ($this->products as $product) {
+            // Vérifier que le produit existe et est actif
+            if (!$product || !$product->is_active) {
+                return false;
+            }
+
             $quantityNeeded = $product->pivot->quantity_included * $bundleQuantity;
             if (!$product->isAvailable($quantityNeeded)) {
                 return false;

@@ -254,6 +254,10 @@
             </div>
         </div>
     </footer>
+
+    {{-- Script de gestion automatique des indicateurs de chargement --}}
+    <script src="{{ asset('js/form-loading.js') }}" defer></script>
+
     @stack('scripts')
 </body>
 </html>

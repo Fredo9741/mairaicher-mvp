@@ -28,14 +28,41 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
+    /**
+     * Get the product if this is a product order item
+     */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class, 'item_id')->where('item_type', 'product');
+        return $this->belongsTo(Product::class, 'item_id')
+            ->withDefault([
+                'name' => 'Produit supprimé',
+                'price_cents' => 0,
+            ]);
     }
 
+    /**
+     * Get the bundle if this is a bundle order item
+     */
     public function bundle(): BelongsTo
     {
-        return $this->belongsTo(Bundle::class, 'item_id')->where('item_type', 'bundle');
+        return $this->belongsTo(Bundle::class, 'item_id')
+            ->withDefault([
+                'name' => 'Panier supprimé',
+                'price_cents' => 0,
+            ]);
+    }
+
+    /**
+     * Get the actual item (product or bundle) based on item_type
+     */
+    public function getItemAttribute()
+    {
+        if ($this->item_type === 'product') {
+            return $this->product;
+        } elseif ($this->item_type === 'bundle') {
+            return $this->bundle;
+        }
+        return null;
     }
 
     public function getUnitPriceAttribute(): float
