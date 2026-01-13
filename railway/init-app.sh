@@ -1,93 +1,99 @@
 #!/bin/bash
 set -e
 
-# ====== TEMPORARY: DATABASE REFRESH MODE ======
-# This mode will be used ONCE to refresh the database completely
-# After running once, restore from init-app.sh.backup
+echo "🚀 Starting Railway deployment initialization..."
 
-echo "🔄 Starting Railway DATABASE REFRESH (ONE-TIME OPERATION)..."
-echo "⚠️  This will delete all data and images!"
+# Run migrations
+echo "📦 Running database migrations..."
+php artisan migrate --force
 
-# Step 1: Clear all Cloudflare R2 images
-echo "🗑️  Clearing all images from Cloudflare R2..."
-php artisan tinker --execute="
-use Illuminate\Support\Facades\Storage;
+# Always run AdminUserSeeder to ensure admin credentials are up-to-date
+echo "🔑 Ensuring admin user exists with correct credentials..."
+php artisan db:seed --force --class=AdminUserSeeder
+echo "✅ Admin user seeder completed"
 
-\$disk = Storage::disk('r2');
+# Check if database needs seeding (check for products, not users)
+PRODUCT_COUNT=$(php artisan tinker --execute="echo App\Models\Product::count();")
 
-if (\$disk->exists('products')) {
-    \$files = \$disk->allFiles('products');
-    echo 'Found ' . count(\$files) . ' product images to delete...' . PHP_EOL;
-    foreach (\$files as \$file) {
-        \$disk->delete(\$file);
-    }
-    echo 'Product images deleted!' . PHP_EOL;
-}
+if [ "$PRODUCT_COUNT" -eq "0" ]; then
+    echo "🌱 Database is empty, running all seeders..."
+    php artisan db:seed --force
+    echo "✅ All seeders completed successfully"
+else
+    echo "⏭️  Database already contains data, skipping additional seeders"
+    echo "   Found $PRODUCT_COUNT products in database"
+fi
 
-if (\$disk->exists('bundles')) {
-    \$files = \$disk->allFiles('bundles');
-    echo 'Found ' . count(\$files) . ' bundle images to delete...' . PHP_EOL;
-    foreach (\$files as \$file) {
-        \$disk->delete(\$file);
-    }
-    echo 'Bundle images deleted!' . PHP_EOL;
-}
+echo "✨ Deployment initialization completed!"
 
-if (\$disk->exists('heroes')) {
-    \$files = \$disk->allFiles('heroes');
-    echo 'Found ' . count(\$files) . ' hero images to delete...' . PHP_EOL;
-    foreach (\$files as \$file) {
-        \$disk->delete(\$file);
-    }
-    echo 'Hero images deleted!' . PHP_EOL;
-}
+# ====== DATABASE REFRESH MODE (COMMENTED OUT) ======
+# Uncomment this code if you need to do a complete database refresh
+# WARNING: This will delete all data and images!
 
-echo '✅ All images cleared from Cloudflare R2' . PHP_EOL;
-"
+# echo "🔄 Starting Railway DATABASE REFRESH (ONE-TIME OPERATION)..."
+# echo "⚠️  This will delete all data and images!"
 
-# Step 2: Fresh migration
-echo "📦 Running fresh migrations..."
-php artisan migrate:fresh --force
+# # Step 1: Clear all Cloudflare R2 images
+# echo "🗑️  Clearing all images from Cloudflare R2..."
+# php artisan tinker --execute="
+# use Illuminate\Support\Facades\Storage;
 
-# Step 3: Run all seeders
-echo "🌱 Seeding database..."
-php artisan db:seed --force
+# \$disk = Storage::disk('r2');
 
-echo "✨ Railway database refresh completed successfully!"
-echo ""
-echo "📊 Database Statistics:"
-php artisan tinker --execute="
-echo 'Users: ' . App\Models\User::count() . PHP_EOL;
-echo 'Products: ' . App\Models\Product::count() . PHP_EOL;
-echo 'Bundles: ' . App\Models\Bundle::count() . PHP_EOL;
-echo 'Pickup Slots: ' . App\Models\PickupSlot::count() . PHP_EOL;
-echo 'Orders: ' . App\Models\Order::count() . PHP_EOL;
-"
+# if (\$disk->exists('products')) {
+#     \$files = \$disk->allFiles('products');
+#     echo 'Found ' . count(\$files) . ' product images to delete...' . PHP_EOL;
+#     foreach (\$files as \$file) {
+#         \$disk->delete(\$file);
+#     }
+#     echo 'Product images deleted!' . PHP_EOL;
+# }
 
-# ====== ORIGINAL CODE (COMMENTED OUT) ======
-# Uncomment this code after the refresh is complete
+# if (\$disk->exists('bundles')) {
+#     \$files = \$disk->allFiles('bundles');
+#     echo 'Found ' . count(\$files) . ' bundle images to delete...' . PHP_EOL;
+#     foreach (\$files as \$file) {
+#         \$disk->delete(\$file);
+#     }
+#     echo 'Bundle images deleted!' . PHP_EOL;
+# }
 
-# echo "🚀 Starting Railway deployment initialization..."
+# if (\$disk->exists('hero')) {
+#     \$files = \$disk->allFiles('hero');
+#     echo 'Found ' . count(\$files) . ' hero images to delete...' . PHP_EOL;
+#     foreach (\$files as \$file) {
+#         \$disk->delete(\$file);
+#     }
+#     echo 'Hero images deleted!' . PHP_EOL;
+# }
 
-# # Run migrations
-# echo "📦 Running database migrations..."
-# php artisan migrate --force
+# if (\$disk->exists('livewire-tmp')) {
+#     \$files = \$disk->allFiles('livewire-tmp');
+#     echo 'Found ' . count(\$files) . ' temporary files to delete...' . PHP_EOL;
+#     foreach (\$files as \$file) {
+#         \$disk->delete(\$file);
+#     }
+#     echo 'Temporary files deleted!' . PHP_EOL;
+# }
 
-# # Always run AdminUserSeeder to ensure admin credentials are up-to-date
-# echo "🔑 Ensuring admin user exists with correct credentials..."
-# php artisan db:seed --force --class=AdminUserSeeder
-# echo "✅ Admin user seeder completed"
+# echo '✅ All images cleared from Cloudflare R2' . PHP_EOL;
+# "
 
-# # Check if database needs seeding (check for products, not users)
-# PRODUCT_COUNT=$(php artisan tinker --execute="echo App\Models\Product::count();")
+# # Step 2: Fresh migration
+# echo "📦 Running fresh migrations..."
+# php artisan migrate:fresh --force
 
-# if [ "$PRODUCT_COUNT" -eq "0" ]; then
-#     echo "🌱 Database is empty, running all seeders..."
-#     php artisan db:seed --force
-#     echo "✅ All seeders completed successfully"
-# else
-#     echo "⏭️  Database already contains data, skipping additional seeders"
-#     echo "   Found $PRODUCT_COUNT products in database"
-# fi
+# # Step 3: Run all seeders
+# echo "🌱 Seeding database..."
+# php artisan db:seed --force
 
-# echo "✨ Deployment initialization completed!"
+# echo "✨ Railway database refresh completed successfully!"
+# echo ""
+# echo "📊 Database Statistics:"
+# php artisan tinker --execute="
+# echo 'Users: ' . App\Models\User::count() . PHP_EOL;
+# echo 'Products: ' . App\Models\Product::count() . PHP_EOL;
+# echo 'Bundles: ' . App\Models\Bundle::count() . PHP_EOL;
+# echo 'Pickup Slots: ' . App\Models\PickupSlot::count() . PHP_EOL;
+# echo 'Orders: ' . App\Models\Order::count() . PHP_EOL;
+# "
