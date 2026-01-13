@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Pour SQLite, on doit recréer la table complète avec la nouvelle structure
+        // Pour SQLite/MySQL, on doit recréer la table complète avec la nouvelle structure
         // car SQLite ne supporte pas ALTER COLUMN pour les ENUM
 
         // Étape 0: Nettoyer toute table temporaire existante d'une migration précédente
@@ -45,9 +45,19 @@ return new class extends Migration
             FROM products
         ");
 
-        // Étape 3: Supprimer l'ancienne table et renommer la nouvelle
+        // Étape 3: Drop la contrainte de clé étrangère avant de supprimer la table products
+        Schema::table('bundle_product', function (Blueprint $table) {
+            $table->dropForeign(['product_id']);
+        });
+
+        // Étape 4: Supprimer l'ancienne table et renommer la nouvelle
         Schema::dropIfExists('products');
         Schema::rename('products_new', 'products');
+
+        // Étape 5: Recréer la contrainte de clé étrangère
+        Schema::table('bundle_product', function (Blueprint $table) {
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+        });
     }
 
     /**
@@ -85,7 +95,17 @@ return new class extends Migration
             FROM products
         ");
 
+        // Drop la contrainte de clé étrangère avant de supprimer la table products
+        Schema::table('bundle_product', function (Blueprint $table) {
+            $table->dropForeign(['product_id']);
+        });
+
         Schema::dropIfExists('products');
         Schema::rename('products_old', 'products');
+
+        // Recréer la contrainte de clé étrangère
+        Schema::table('bundle_product', function (Blueprint $table) {
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+        });
     }
 };
