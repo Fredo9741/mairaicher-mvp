@@ -4,3 +4,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Alpine.js cloak - empêche le flash des éléments cachés au chargement */
+[x-cloak] {
+    display: none !important;
+}

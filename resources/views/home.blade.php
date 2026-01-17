@@ -8,7 +8,7 @@
     <div class="relative bg-red-600 rounded-3xl shadow-2xl overflow-hidden mb-16">
         <!-- Image de fond -->
         <div class="absolute inset-0">
-            <img src="{{ ($hero && $hero->image) ? Storage::disk('r2')->url($hero->image) : asset('images/hero-reunion.jpg') }}"
+            <img src="{{ ($hero && $hero->image) ? Storage::disk('r2')->url($hero->image) : 'https://files-maraicher.fredlabs.org/hero/hero-reunion.webp' }}"
                  alt="{{ $hero->title ?? 'Tomates fraîches' }}"
                  class="w-full h-full object-cover"
                  fetchpriority="high">
@@ -81,9 +81,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
         <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200 hover:-translate-y-1">
             <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-emerald-200 transition-colors">
-                <svg class="w-7 h-7 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z"/>
-                </svg>
+                <span class="material-symbols-outlined text-3xl text-emerald-600">eco</span>
             </div>
             <h3 class="text-xl font-bold text-gray-800 mb-3">Cultivé localement</h3>
             <p class="text-gray-600 leading-relaxed">Des légumes frais cultivés avec passion dans le respect de la nature et des saisons.</p>
@@ -91,10 +89,7 @@
 
         <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200 hover:-translate-y-1">
             <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-green-200 transition-colors">
-                <svg class="w-7 h-7 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                </svg>
+                <span class="material-symbols-outlined text-3xl text-green-600">verified</span>
             </div>
             <h3 class="text-xl font-bold text-gray-800 mb-3">Qualité contrôlée</h3>
             <p class="text-gray-600 leading-relaxed">Chaque produit est soigneusement sélectionné pour garantir fraîcheur et saveur.</p>
@@ -102,10 +97,7 @@
 
         <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200 hover:-translate-y-1">
             <div class="w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-teal-200 transition-colors">
-                <svg class="w-7 h-7 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
-                    <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
-                </svg>
+                <span class="material-symbols-outlined text-3xl text-teal-600">local_shipping</span>
             </div>
             <h3 class="text-xl font-bold text-gray-800 mb-3">Livraison express</h3>
             <p class="text-gray-600 leading-relaxed">Vos produits frais livrés rapidement, de la ferme à votre table en toute simplicité.</p>
@@ -300,7 +292,7 @@
             'legume' => [
                 'label' => 'Légumes Frais',
                 'description' => 'Une sélection variée de légumes de saison',
-                'icon' => '<path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z"/>',
+                'materialIcon' => 'yard',
                 'gradient' => 'from-green-600 to-emerald-600',
                 'bgColor' => 'from-green-50 to-emerald-50',
                 'borderColor' => 'border-green-200'
@@ -308,7 +300,7 @@
             'fruit' => [
                 'label' => 'Fruits Frais',
                 'description' => 'Des fruits tropicaux savoureux et gorgés de soleil',
-                'icon' => '<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/>',
+                'materialIcon' => 'nutrition',
                 'gradient' => 'from-red-600 to-pink-600',
                 'bgColor' => 'from-red-50 to-pink-50',
                 'borderColor' => 'border-red-200'
@@ -316,7 +308,7 @@
             'volaille' => [
                 'label' => 'Volaille Fermière',
                 'description' => 'Élevage en plein air, qualité premium',
-                'icon' => '<path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>',
+                'materialIcon' => 'egg_alt',
                 'gradient' => 'from-orange-600 to-amber-600',
                 'bgColor' => 'from-orange-50 to-amber-50',
                 'borderColor' => 'border-orange-200'
@@ -324,7 +316,7 @@
             'epicerie' => [
                 'label' => 'Épicerie',
                 'description' => 'Découvrez nos spécialités et produits du terroir',
-                'icon' => '<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>',
+                'materialIcon' => 'shopping_basket',
                 'gradient' => 'from-amber-600 to-yellow-600',
                 'bgColor' => 'from-amber-50 to-yellow-50',
                 'borderColor' => 'border-amber-200'
@@ -342,9 +334,7 @@
             <div class="flex items-center justify-between mb-10">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 bg-gradient-to-br {{ $categoryData['gradient'] }} rounded-xl flex items-center justify-center shadow-lg">
-                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            {!! $categoryData['icon'] !!}
-                        </svg>
+                        <span class="material-symbols-outlined text-3xl text-white">{{ $categoryData['materialIcon'] }}</span>
                     </div>
                     <div>
                         <h2 class="text-4xl font-bold bg-gradient-to-r {{ $categoryData['gradient'] }} bg-clip-text text-transparent">
@@ -530,9 +520,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all hover:-translate-y-1">
                 <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-7 h-7 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-3xl text-green-600">location_on</span>
                 </div>
                 <h3 class="font-bold text-gray-800 mb-2 text-lg">100% Local</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">Produits cultivés à proximité pour soutenir l'économie locale</p>
@@ -540,9 +528,7 @@
 
             <div class="bg-white rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all hover:-translate-y-1">
                 <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-7 h-7 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-3xl text-emerald-600">spa</span>
                 </div>
                 <h3 class="font-bold text-gray-800 mb-2 text-lg">Fraîcheur Garantie</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">De la ferme à votre table, qualité et fraîcheur assurées</p>
@@ -550,9 +536,7 @@
 
             <div class="bg-white rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all hover:-translate-y-1">
                 <div class="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-7 h-7 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-3xl text-teal-600">family_restroom</span>
                 </div>
                 <h3 class="font-bold text-gray-800 mb-2 text-lg">Agriculture Familiale</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">Savoir-faire transmis de génération en génération</p>
@@ -560,9 +544,7 @@
 
             <div class="bg-white rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all hover:-translate-y-1">
                 <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-7 h-7 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-3xl text-green-600">recycling</span>
                 </div>
                 <h3 class="font-bold text-gray-800 mb-2 text-lg">Pratiques Durables</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">Respect de l'environnement et agriculture responsable</p>

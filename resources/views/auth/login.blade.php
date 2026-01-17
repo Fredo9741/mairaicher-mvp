@@ -8,9 +8,9 @@
         <div class="max-w-md w-full space-y-6">
             <!-- Header -->
             <div class="text-center">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-600 to-green-600 rounded-2xl shadow-xl mb-4">
-                    <span class="text-5xl">🌿</span>
-                </div>
+                <img src="{{ asset('images/logopapangue.webp') }}"
+                     alt="Domaine des Papangues"
+                     class="h-20 w-auto mx-auto mb-4">
                 <h2 class="text-3xl font-extrabold text-gray-900">
                     Connexion
                 </h2>
