@@ -280,10 +280,14 @@ function checkoutDatePicker(availableDaysWire, pickupDateWire) {
             const days = Array.isArray(this.availableDays) ? this.availableDays : [];
 
             // On stocke la NOUVELLE instance
+            // Calcule la date de demain (aujourd'hui n'est pas sélectionnable)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
             this.flatpickrInstance = flatpickr(this.$refs.dateInput, {
                 locale: typeof flatpickrFrench !== 'undefined' ? flatpickrFrench : 'fr',
                 dateFormat: 'Y-m-d',
-                minDate: 'today',
+                minDate: tomorrow,
                 defaultDate: this.pickupDate,
                 enable: days.length > 0 ? [
                     (date) => days.includes(date.getDay())

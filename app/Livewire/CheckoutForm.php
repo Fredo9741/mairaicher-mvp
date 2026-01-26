@@ -32,9 +32,9 @@ class CheckoutForm extends Component
     protected $rules = [
         'customer_name' => 'required|string|max:255',
         'customer_email' => 'required|email|max:255',
-        'customer_phone' => ['required', 'string', 'regex:/^(\+262|0262|0)\s?[0-9]{3}\s?[0-9]{2}\s?[0-9]{2}\s?[0-9]{2}$/'],
+        'customer_phone' => ['required', 'string', 'regex:/^((\+262\s?|0)(262|69[23])\s?[0-9]{2}\s?[0-9]{2}\s?[0-9]{2}|(\+33\s?|0)[1-79](\s?[0-9]{2}){4})$/'],
         'selectedPickupSlotId' => 'required|exists:pickup_slots,id',
-        'pickupDate' => 'required|date|after_or_equal:today',
+        'pickupDate' => 'required|date|after:today',
         'selectedTimeSlot' => 'required',
         'notes' => 'nullable|string|max:1000',
     ];
@@ -44,10 +44,10 @@ class CheckoutForm extends Component
         'customer_email.required' => 'L\'email est obligatoire.',
         'customer_email.email' => 'L\'email doit être valide.',
         'customer_phone.required' => 'Le téléphone est obligatoire.',
-        'customer_phone.regex' => 'Le format du téléphone n\'est pas valide. Ex: +262 692 XX XX XX ou 0692 XX XX XX',
+        'customer_phone.regex' => 'Le format du téléphone n\'est pas valide. Ex: 0692 XX XX XX, 0262 XX XX XX, 06/07 XX XX XX XX ou +33 6/7 XX XX XX XX',
         'selectedPickupSlotId.required' => 'Veuillez sélectionner un point de retrait sur la carte.',
         'pickupDate.required' => 'La date de retrait est obligatoire.',
-        'pickupDate.after_or_equal' => 'La date de retrait doit être aujourd\'hui ou dans le futur.',
+        'pickupDate.after' => 'La date de retrait doit être au minimum demain.',
         'selectedTimeSlot.required' => 'Veuillez sélectionner un horaire de retrait.',
     ];
 
@@ -349,17 +349,11 @@ class CheckoutForm extends Component
             \Log::info('Vidage du panier de la session');
             session()->forget('cart');
 
-            // Vérifier que la route existe
-            \Log::info('Vérification de la route checkout.confirmation');
-            if (!route('checkout.confirmation', ['order' => $order->id], false)) {
-                throw new \Exception('La route checkout.confirmation n\'existe pas');
-            }
-
-            // Redirection vers la page de confirmation
-            \Log::info("Redirection vers checkout.confirmation avec order_id={$order->id}");
+            \Log::info("Redirection vers Stripe Checkout pour order_id={$order->id}");
             \Log::info('=== FIN SUBMITORDER (SUCCÈS) ===');
 
-            return redirect()->route('checkout.confirmation', $order)->with('success', 'Commande créée avec succès !');
+            // Redirige vers Stripe Checkout pour le paiement
+            return redirect()->route('stripe.checkout', $order);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();

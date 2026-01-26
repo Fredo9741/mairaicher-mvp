@@ -166,7 +166,7 @@
                         <strong>Information importante :</strong>
                     </p>
                     <p class="text-sm text-blue-700 mt-1">
-                        Le paiement se fera directement lors du retrait de votre commande. Aucun paiement en ligne n'est requis.
+                        Le paiement s'effectue en ligne via <strong>Stripe</strong>, une plateforme de paiement sécurisée. En cliquant sur "Confirmer ma commande", une nouvelle page s'ouvrira pour finaliser votre paiement.
                     </p>
                 </div>
             </div>
