@@ -5,17 +5,49 @@
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="bg-white rounded-lg shadow-lg p-8">
+
+        {{-- Messages flash --}}
+        @if(session('success'))
+            <div class="mb-6 p-4 bg-green-100 border border-green-300 text-green-800 rounded-lg">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('warning'))
+            <div class="mb-6 p-4 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg">
+                {{ session('warning') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="mb-6 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <!-- Message de succès -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-            </div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Commande confirmée !</h1>
-            <p class="text-lg text-gray-600">
-                Merci {{ $order->customer_name }}, votre commande a bien été enregistrée.
-            </p>
+            @if($order->status === 'paid')
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Paiement confirmé !</h1>
+                <p class="text-lg text-gray-600">
+                    Merci {{ $order->customer_name }}, votre paiement a été effectué avec succès.
+                </p>
+            @else
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Commande enregistrée</h1>
+                <p class="text-lg text-gray-600">
+                    Merci {{ $order->customer_name }}, votre commande a bien été enregistrée.
+                </p>
+            @endif
         </div>
 
         <!-- Informations de commande -->
@@ -28,9 +60,32 @@
                         <p><span class="font-medium">Email:</span> {{ $order->customer_email }}</p>
                         <p><span class="font-medium">Téléphone:</span> {{ $order->customer_phone }}</p>
                         <p><span class="font-medium">Statut:</span>
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                En attente
-                            </span>
+                            @switch($order->status)
+                                @case('paid')
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        Payée
+                                    </span>
+                                    @break
+                                @case('ready')
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        Prête
+                                    </span>
+                                    @break
+                                @case('completed')
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        Terminée
+                                    </span>
+                                    @break
+                                @case('cancelled')
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                        Annulée
+                                    </span>
+                                    @break
+                                @default
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        En attente de paiement
+                                    </span>
+                            @endswitch
                         </p>
                     </div>
                 </div>
@@ -127,18 +182,45 @@
             </div>
         </div>
 
-        <!-- Paiement -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
-            <h3 class="text-lg font-bold text-yellow-800 mb-2">Paiement lors du retrait</h3>
-            <p class="text-yellow-700">
-                Le paiement de {{ number_format($order->total_price_cents / 100, 2, ',', ' ') }} €
-                sera à effectuer lors du retrait de votre commande le {{ \Carbon\Carbon::parse($order->pickup_date)->format('d/m/Y') }}
-                ({{ $order->pickupSlot->name }}).
-            </p>
-            <p class="text-sm text-yellow-600 mt-2">
-                Moyens de paiement acceptés: Espèces, Carte bancaire
-            </p>
-        </div>
+        <!-- Section Paiement -->
+        @if($order->status === 'paid')
+            {{-- Paiement effectué --}}
+            <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <h3 class="text-lg font-bold text-green-800">Paiement effectué</h3>
+                        <p class="text-green-700">
+                            Votre paiement de {{ number_format($order->total_price_cents / 100, 2, ',', ' ') }} € a été confirmé.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @else
+            {{-- Paiement en attente - Proposer de payer maintenant --}}
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+                <h3 class="text-lg font-bold text-yellow-800 mb-2">Paiement en attente</h3>
+                <p class="text-yellow-700 mb-4">
+                    Votre commande est en attente de paiement. Vous pouvez payer maintenant en ligne ou lors du retrait.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{{ route('stripe.checkout', $order) }}"
+                       class="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition font-medium">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                        Payer maintenant ({{ number_format($order->total_price_cents / 100, 2, ',', ' ') }} €)
+                    </a>
+
+                    <span class="text-sm text-yellow-600 self-center">
+                        ou payez en espèces/CB lors du retrait
+                    </span>
+                </div>
+            </div>
+        @endif
 
         <!-- Email de confirmation -->
         <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-8">

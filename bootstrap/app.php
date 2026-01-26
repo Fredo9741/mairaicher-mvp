@@ -13,6 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
 
+        // Exclure le webhook Stripe de la vérification CSRF
+        $middleware->validateCsrfTokens(except: [
+            'stripe/webhook',
+        ]);
+
         // Enregistrer les alias de middleware personnalisés
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,

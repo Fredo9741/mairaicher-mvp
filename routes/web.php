@@ -8,6 +8,8 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Auth\UniversalLoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\StripeWebhookController;
 
 // ============================================
 // AUTHENTICATION UNIVERSELLE
@@ -57,3 +59,13 @@ Route::delete('/panier', [CartController::class, 'clear'])->name('cart.clear');
 Route::get('/commander', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/commander', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/commande/{order}/confirmation', [CheckoutController::class, 'confirmation'])->name('checkout.confirmation');
+
+// ============================================
+// STRIPE PAYMENT
+// ============================================
+Route::get('/paiement/{order}', [StripeController::class, 'checkout'])->name('stripe.checkout');
+Route::get('/paiement/{order}/succes', [StripeController::class, 'success'])->name('stripe.success');
+Route::get('/paiement/{order}/annule', [StripeController::class, 'cancel'])->name('stripe.cancel');
+
+// Webhook Stripe (exclue du CSRF dans bootstrap/app.php)
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])->name('stripe.webhook');
